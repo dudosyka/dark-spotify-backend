@@ -2,9 +2,9 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
 
-#Dark-time music stream service 
+# Dark-time music stream service 
 
-> ###Dark spotify for the dark time...
+> ### Dark spotify for the dark time...
 
 ## Installation
 
