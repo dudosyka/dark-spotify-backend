@@ -7,6 +7,11 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return `
+    <audio controls>
+      <source src="http://localhost:3000/music-controller/pcp" type="audio/mp3">
+      Your browser does not support the audio tag.
+    </audio>`
   }
+
 }
