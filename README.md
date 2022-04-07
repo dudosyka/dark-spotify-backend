@@ -4,7 +4,7 @@
 
 # Dark-time music stream service 
 
-> ### Dark spotify for the dark time...
+> ### Dark spotify for the dark times...
 
 ## Installation
 
