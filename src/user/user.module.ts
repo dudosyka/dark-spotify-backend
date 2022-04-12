@@ -21,6 +21,9 @@ import { PlaylistGenreModel } from "../playlist/models/playlist.genre.model";
 import { PlaylistVisibleTypeModel } from "../playlist/models/playlist.visible.type.model";
 import { FriendModel } from "./models/friend.model";
 import { SubscribeModel } from "./models/subscribe.model";
+import { UserController } from './user.controller';
+import { RbacService } from "../rbac/rbac.service";
+import { RbacModule } from "../rbac/rbac.module";
 
 @Module({
   imports: [
@@ -32,9 +35,10 @@ import { SubscribeModel } from "./models/subscribe.model";
         AlbumModel, AlbumTypeModel, AlbumGenreModel,
         PlaylistModel, PlaylistUserModel, PlaylistSongModel, PlaylistGenreModel, PlaylistVisibleTypeModel,
         GenreModel
-      ])
+      ]),
+    RbacModule
   ],
-  providers: [UserService],
+  providers: [UserService, RbacService],
   exports: [
     SequelizeModule.forFeature(
       [
@@ -44,6 +48,7 @@ import { SubscribeModel } from "./models/subscribe.model";
         AlbumModel, AlbumTypeModel,
         GenreModel
       ])
-  ]
+  ],
+  controllers: [UserController]
 })
 export class UserModule {}

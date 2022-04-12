@@ -4,7 +4,7 @@ import { UserModel } from "./user.model";
 @Table
 export class RefsModel extends Model {
   @Column
-  id: number
+  declare id: number
 
   @ForeignKey(() => UserModel)
   child: UserModel

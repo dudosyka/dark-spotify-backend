@@ -1,4 +1,4 @@
-import { BelongsTo, BelongsToMany, Column, ForeignKey, HasOne, Model, Table } from "sequelize-typescript";
+import { BelongsToMany, Column, ForeignKey, Model, Table } from "sequelize-typescript";
 import { SongModel } from "../../song/models/song.model";
 import { UserSongModel } from "./user.song.model";
 import { PlaylistModel } from "../../playlist/models/playlist.model";
@@ -11,7 +11,7 @@ import { UserRuleModel } from "../../rbac/models/user.rule.model";
 export class UserModel extends Model {
   @ForeignKey(() => UserSongModel)
   @ForeignKey(() => FriendModel)
-  id: number
+  declare id: number
 
   @Column
   login: string;

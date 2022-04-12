@@ -4,8 +4,8 @@ import { SongGenreModel } from "../../song/models/song.genre.model";
 @Table
 export class GenreModel extends Model {
   @ForeignKey(() => SongGenreModel)
-  id: number
+  declare id: number
 
   @Column
-  name: string
+  declare name: string
 }

@@ -10,7 +10,7 @@ import { UserModel } from "../../user/models/user.model";
 @Table
 export class ArtistModel extends Model {
   @ForeignKey(() => SongArtistModel)
-  id: number
+  declare id: number
 
   @Column
   name: string
