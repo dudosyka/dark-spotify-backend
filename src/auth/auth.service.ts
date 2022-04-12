@@ -23,9 +23,11 @@ export class AuthService {
   }
 
   public async login(user: UserModel): Promise<{ token: string, refresh: string }> {
-    const rights = await this.rbacService.getRights(user.id)
-    const refresh = this.jwtService.sign({ user: user.id, refresh: true }, { expiresIn: '30d' })
-    const token = this.jwtService.sign({ user: user.id, rules: rights }, { expiresIn: '15m' })
+    const rights = await this.rbacService.getRights(user.id);
+    const refresh = this.jwtService.sign({ user: user.id, refresh: true }, { expiresIn: '30d' });
+    const iat = this.jwtService.decode(refresh)['iat'];
+    await this.userService.updateRefresh(user, iat)
+    const token = this.jwtService.sign({ user: user.id, rules: rights }, { expiresIn: '15m' });
     return {
       token,
       refresh
@@ -33,12 +35,17 @@ export class AuthService {
   }
 
   public async refresh(refresh: any) {
+    console.log(refresh)
     if (!refresh.refresh) {
-      throw new UnauthorizedException('Bad token')
+      throw new UnauthorizedException('Bad token');
     }
-    return await this.login(await this.userService.findOne({
+    const user = await this.userService.findOne({
       id: refresh.user
-    }, []))
+    }, [])
+    if (user.refresh != refresh.iat) {
+      throw new UnauthorizedException('Token expired');
+    }
+    return await this.login(user)
   }
 
 }

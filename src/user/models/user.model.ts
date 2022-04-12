@@ -25,6 +25,9 @@ export class UserModel extends Model {
   @Column
   listened_time: number;
 
+  @Column
+  refresh: string;
+
   @ForeignKey(() => SongModel)
   status: SongModel;
 

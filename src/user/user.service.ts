@@ -44,6 +44,12 @@ export class UserService {
       include
     })
   }
+  
+  public async updateRefresh(user: UserModel, iat: number): Promise<UserModel> {
+    return await user.update({
+      refresh: iat
+    })
+  }
 
   public async getSongs(): Promise<UserModel[]> {
     const user = await this.userModel.findOne({
