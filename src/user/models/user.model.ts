@@ -4,6 +4,8 @@ import { UserSongModel } from "./user.song.model";
 import { PlaylistModel } from "../../playlist/models/playlist.model";
 import { PlaylistUserModel } from "../../playlist/models/playlist.user.model";
 import { FriendModel } from "./friend.model";
+import { RuleModel } from "../../rbac/models/rule.model";
+import { UserRuleModel } from "../../rbac/models/user.rule.model";
 
 @Table
 export class UserModel extends Model {
@@ -41,4 +43,7 @@ export class UserModel extends Model {
   friends() {
     return this.children.concat(this.parent)
   }
+
+  @BelongsToMany(() => RuleModel, () => UserRuleModel)
+  rules: RuleModel[]
 }

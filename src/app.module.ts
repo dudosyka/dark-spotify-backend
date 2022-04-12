@@ -11,6 +11,7 @@ import { RbacModule } from './rbac/rbac.module';
 import { SequelizeModule } from "@nestjs/sequelize";
 import {default as db_conf} from './db_conf'
 import { UserService } from "./user/user.service";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [UserModule, SongModule, AlbumModule, ArtistModule, PlaylistModule, GenreModule, RbacModule,
@@ -20,6 +21,7 @@ import { UserService } from "./user/user.service";
       autoLoadModels: true,
       synchronize: true
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],
