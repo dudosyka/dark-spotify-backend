@@ -22,23 +22,23 @@ export class UserService {
     }))
   }
 
-  private async generatePassword(password): Promise<string> {
-    return await (new Promise<string>((resolve, reject) => {
-      bcrypt.genSalt(10, (err, salt) => {
-        if (err) {
-          reject(err)
-        }
-        bcrypt.hash(password, salt, (err, res) => {
-          if (err) {
-            reject(err)
-          }
-          resolve(res)
-        })
-      })
-    }));
-}
+  // private async generatePassword(password): Promise<string> {
+  //   return await (new Promise<string>((resolve, reject) => {
+  //     bcrypt.genSalt(10, (err, salt) => {
+  //       if (err) {
+  //         reject(err)
+  //       }
+  //       bcrypt.hash(password, salt, (err, res) => {
+  //         if (err) {
+  //           reject(err)
+  //         }
+  //         resolve(res)
+  //       })
+  //     })
+  //   }));
+  // }
 
-  public async findOne(where: WhereOptions<any>, include: Includeable[]): Promise<UserModel> {
+  public async findOne(where: WhereOptions<any>, include: Includeable[] = []): Promise<UserModel> {
     return this.userModel.findOne({
       where,
       include

@@ -15,9 +15,6 @@ export class PlaylistModel extends Model {
   @Column
   image: string
 
-  @Column
-  created_at: number
-
   @ForeignKey(() => PlaylistVisibleTypeModel)
   playlist_visible_type: PlaylistVisibleTypeModel
 
