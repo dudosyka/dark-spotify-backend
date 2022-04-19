@@ -48,4 +48,8 @@ export class AuthService {
     return await this.login(user)
   }
 
+  public async createUser(user: { login: string, password: string }): Promise<UserModel> | never {
+    return await this.userService.reg(user);
+  }
+
 }

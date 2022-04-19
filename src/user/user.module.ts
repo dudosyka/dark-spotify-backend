@@ -24,6 +24,8 @@ import { SubscribeModel } from "./models/subscribe.model";
 import { UserController } from './user.controller';
 import { RbacService } from "../rbac/rbac.service";
 import { RbacModule } from "../rbac/rbac.module";
+import { MulterModule } from "@nestjs/platform-express";
+import { MulterConfigModule } from "../multer-config/multer-config.module";
 
 @Module({
   imports: [
@@ -36,7 +38,10 @@ import { RbacModule } from "../rbac/rbac.module";
         PlaylistModel, PlaylistUserModel, PlaylistSongModel, PlaylistGenreModel, PlaylistVisibleTypeModel,
         GenreModel
       ]),
-    RbacModule
+    RbacModule,
+    MulterModule.registerAsync({
+      useClass: MulterConfigModule,
+    })
   ],
   providers: [UserService, RbacService],
   exports: [

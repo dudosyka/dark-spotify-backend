@@ -12,6 +12,7 @@ import { SequelizeModule } from "@nestjs/sequelize";
 import {default as db_conf} from './db_conf'
 import { UserService } from "./user/user.service";
 import { AuthModule } from './auth/auth.module';
+import { MulterConfigModule } from './multer-config/multer-config.module';
 
 @Module({
   imports: [UserModule, SongModule, AlbumModule, ArtistModule, PlaylistModule, GenreModule, RbacModule,
@@ -22,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: true
     }),
     AuthModule,
+    MulterConfigModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],
