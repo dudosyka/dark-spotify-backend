@@ -13,8 +13,11 @@ export class SongModel extends Model {
   @Column
   name: string;
 
+  @Column
+  path: string;
+
   @BelongsToMany(() => ArtistModel, () => SongArtistModel)
-  artist: ArtistModel[]
+  artists: ArtistModel[]
 
   @BelongsToMany(() => GenreModel, () => SongGenreModel)
   genres: GenreModel[]

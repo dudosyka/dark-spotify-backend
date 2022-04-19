@@ -25,7 +25,7 @@ import { UserController } from './user.controller';
 import { RbacService } from "../rbac/rbac.service";
 import { RbacModule } from "../rbac/rbac.module";
 import { MulterModule } from "@nestjs/platform-express";
-import { MulterConfigModule } from "../multer-config/multer-config.module";
+import { MulterAvatarConfig } from "../multer-config/multer.avatar.config";
 
 @Module({
   imports: [
@@ -40,7 +40,7 @@ import { MulterConfigModule } from "../multer-config/multer-config.module";
       ]),
     RbacModule,
     MulterModule.registerAsync({
-      useClass: MulterConfigModule,
+      useClass: MulterAvatarConfig,
     })
   ],
   providers: [UserService, RbacService],

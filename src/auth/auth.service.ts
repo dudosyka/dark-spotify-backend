@@ -27,7 +27,7 @@ export class AuthService {
     const refresh = this.jwtService.sign({ user: user.id, refresh: true }, { expiresIn: '30d' });
     const iat = this.jwtService.decode(refresh)['iat'];
     await this.userService.updateRefresh(user, iat)
-    const token = this.jwtService.sign({ user: user.id, rules: rights }, { expiresIn: '15m' });
+    const token = this.jwtService.sign({ user: user.id, rules: rights }, { expiresIn: '45m' });
     return {
       token,
       refresh
