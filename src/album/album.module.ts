@@ -21,6 +21,7 @@ import { PlaylistSongModel } from "../playlist/models/playlist.song.model";
 import { PlaylistGenreModel } from "../playlist/models/playlist.genre.model";
 import { PlaylistVisibleTypeModel } from "../playlist/models/playlist.visible.type.model";
 import { GenreModel } from "../genre/models/genre.model";
+import { AlbumController } from './album.controller';
 
 @Module({
   providers: [AlbumService],
@@ -34,6 +35,7 @@ import { GenreModel } from "../genre/models/genre.model";
         PlaylistModel, PlaylistUserModel, PlaylistSongModel, PlaylistGenreModel, PlaylistVisibleTypeModel,
         GenreModel
       ]),
-  ]
+  ],
+  controllers: [AlbumController]
 })
 export class AlbumModule {}

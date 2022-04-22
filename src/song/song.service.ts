@@ -5,15 +5,18 @@ import { SongDto } from "./song.dto";
 import { ArtistService } from "../artist/artist.service";
 import { AlbumService } from "../album/album.service";
 import { GenreService } from "../genre/genre.service";
+import { BaseService } from "../utils/base.service";
 
 @Injectable()
-export class SongService {
+export class SongService extends BaseService<SongDto, typeof SongModel>{
   constructor(
     @InjectModel(SongModel) private songModel: typeof SongModel,
     private artistService: ArtistService,
     private albumService: AlbumService,
     private genreService: GenreService
-  ) {}
+  ) {
+    super('', '', SongModel, null)
+  }
 
   public async upload(@UploadedFiles() songs: Array<Express.Multer.File>, songsData: Array<SongDto>): Promise<Array<SongDto>> {
     const values = [];
