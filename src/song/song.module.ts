@@ -48,6 +48,7 @@ import { GenreModule } from "../genre/genre.module";
       useClass: MulterSongConfig
     })
   ],
-  controllers: [SongController]
+  controllers: [SongController],
+  exports: [ ArtistService, AlbumService, GenreService ]
 })
 export class SongModule {}

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from "./user/user.service";
-import { UserModel } from "./user/models/user.model";
+import { SongModel } from "./song/models/song.model";
 
 @Injectable()
 export class AppService {
   constructor(private userService: UserService) {}
 
-  getHello(): Promise<UserModel[]> {
+  getHello(): Promise<SongModel[]> {
     return this.userService.getSongs()
   }
 }

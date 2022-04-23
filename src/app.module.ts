@@ -13,6 +13,8 @@ import {default as db_conf} from './db_conf'
 import { UserService } from "./user/user.service";
 import { AuthModule } from './auth/auth.module';
 import { MulterAvatarConfig } from './multer-config/multer.avatar.config';
+import { StreamModule } from './stream/stream.module';
+import { MongooseModule } from "@nestjs/mongoose";
 
 @Module({
   imports: [UserModule, SongModule, AlbumModule, ArtistModule, PlaylistModule, GenreModule, RbacModule,
@@ -24,6 +26,8 @@ import { MulterAvatarConfig } from './multer-config/multer.avatar.config';
     }),
     AuthModule,
     MulterAvatarConfig,
+    StreamModule,
+    MongooseModule.forRoot("mongodb://localhost/dark-spotify-db/stream")
   ],
   controllers: [AppController],
   providers: [AppService, UserService],

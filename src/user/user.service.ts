@@ -85,7 +85,7 @@ export class UserService extends Service {
     return (await user.save()).image;
   }
 
-  public async getSongs(): Promise<UserModel[]> {
+  public async getSongs(): Promise<SongModel[]> {
     const user = await this.userModel.findOne({
       where: {
         id: 3
@@ -93,6 +93,6 @@ export class UserService extends Service {
       include: [SongModel, { model: UserModel, as: 'children' }, { model: UserModel, as: "parent" }]
     });
 
-    return user.friends()
+    return user.songs;
   }
 }

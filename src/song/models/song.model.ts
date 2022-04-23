@@ -24,5 +24,4 @@ export class SongModel extends Model {
 
   @BelongsToMany(() => AlbumModel, () => SongAlbumModel)
   albums: AlbumModel[]
-
 }
