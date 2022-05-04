@@ -3,7 +3,6 @@ import { StreamController } from './stream.controller';
 import { StreamService } from './stream.service';
 import { MongooseModule } from "@nestjs/mongoose";
 import { Stream, StreamSchema } from "./models/stream.model";
-import { SongModule } from "../song/song.module";
 import { AlbumModule } from "../album/album.module";
 import { SongService } from "../song/song.service";
 import { AlbumService } from "../album/album.service";
@@ -30,6 +29,8 @@ import { PlaylistVisibleTypeModel } from "../playlist/models/playlist.visible.ty
 import { GenreModel } from "../genre/models/genre.model";
 import { PlaylistModule } from "../playlist/playlist.module";
 import { PlaylistService } from "../playlist/playlist.service";
+import { ArtistService } from "../artist/artist.service";
+import { GenreService } from "../genre/genre.service";
 
 @Module({
   controllers: [StreamController],
@@ -44,11 +45,10 @@ import { PlaylistService } from "../playlist/playlist.service";
       GenreModel
     ]),
     MongooseModule.forFeature([ {name: Stream.name, schema: StreamSchema} ]),
-    SongModule,
     AlbumModule,
     PlaylistModule
   ],
-  providers: [StreamService, SongService, AlbumService, PlaylistService],
+  providers: [StreamService, SongService, GenreService, ArtistService, AlbumService, PlaylistService],
   exports: [SongService, AlbumService]
 })
 export class StreamModule {}

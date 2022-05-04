@@ -27,7 +27,11 @@ import { MongooseModule } from "@nestjs/mongoose";
     AuthModule,
     MulterAvatarConfig,
     StreamModule,
-    MongooseModule.forRoot("mongodb://localhost/dark-spotify-db/stream")
+    MongooseModule.forRoot(
+      "mongodb://localhost:27017",
+      {
+        dbName: "dark-spotify-db"
+      })
   ],
   controllers: [AppController],
   providers: [AppService, UserService],

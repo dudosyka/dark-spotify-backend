@@ -6,6 +6,6 @@ export interface StreamOnPlay {
 export interface CreateStreamDto {
   userId: number,
   onPlay: StreamOnPlay,
-  playlist: number[],
-  album: number,
+  playList: number[],
+  album: number | null,
 }

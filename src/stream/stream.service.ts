@@ -7,7 +7,6 @@ import { OutputStreamDto } from "./output.stream.dto";
 import { SongService } from "../song/song.service";
 import { AlbumService } from "../album/album.service";
 import { createReadStream, ReadStream } from "fs";
-import { join } from "path";
 import { UpdateStreamDto, UpdateStreamType } from "./update.stream.dto";
 import { PlaylistService } from "../playlist/playlist.service";
 import { SongModel } from "../song/models/song.model";
@@ -23,24 +22,29 @@ export class StreamService {
 
   async create(data: CreateStreamDto): Promise<StreamDocument> {
     const created = new this.streamModel(data);
+    console.log(created)
     return await created.save()
   }
 
-  async findOne(id: number): Promise<StreamDocument> {
-    return await this.streamModel.findOne({ id: id }).exec();
+  async findOne(id: string): Promise<StreamDocument> {
+    return await this.streamModel.findOne({ _id: id }).exec();
   }
 
-  async update(id: number, data: any) {
+  async findByUser(user_id: number): Promise<StreamDocument> {
+    return await this.streamModel.findOne({ user_id: user_id }).exec();
+  }
+
+  async update(id: string, data: any) {
     return this.streamModel.updateOne({
       id: id
     }, data);
   }
 
-  async remove(id: number): Promise<any> {
+  async remove(id: string): Promise<any> {
     return await this.streamModel.remove({ id: id }).exec();
   }
 
-  async append(id: number, updateDto: UpdateStreamDto): Promise<any> {
+  async append(id: string, updateDto: UpdateStreamDto): Promise<any> {
     const stream = await this.findOne(id);
     let data = {
       playList: stream.playList
@@ -75,9 +79,9 @@ export class StreamService {
     return await this.streamModel.updateOne({ id: id }, data).exec();
   }
 
-  async info(id: number): Promise<OutputStreamDto> {
+  async info(id: string): Promise<OutputStreamDto> {
     const stream = await this.findOne(id);
-    const onPlay = await this.songService.getOne({ where: { id: stream.onPlay } })
+    const onPlay = await this.songService.getOne({ where: { id: stream.onPlay.songId } })
     const playList = await this.songService.getAll({
         where: {
           id: {
@@ -93,15 +97,13 @@ export class StreamService {
     }
   }
 
-  async getOnPlay(id: number): Promise<ReadStream> {
+  async getOnPlay(id: string): Promise<ReadStream> {
     const onPlay = (await this.findOne(id)).onPlay;
-    const song = await this.songService.getOne({ where: { id: onPlay } });
-    const path = join(process.cwd(), 'files/songs', song.name);
-    console.log(path)
-    return createReadStream(path)
+    const song = await this.songService.getOne({ where: { id: onPlay.songId } });
+    return createReadStream(song['path'])
   }
 
-  async next(id: number): Promise<ReadStream> {
+  async next(id: string): Promise<ReadStream> {
     const stream = await this.findOne(id);
     const onPlay = stream.onPlay.playlistPosition;
     await this.update(id, {

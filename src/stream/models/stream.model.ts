@@ -17,7 +17,7 @@ export class Stream {
   userId: number
 
   @Prop({
-    type: Number
+    type: Object
   })
   onPlay: StreamOnPlay
 

@@ -1,13 +1,27 @@
-import { Controller, Post, UploadedFiles, UseGuards, UseInterceptors, Request, Body, Get, Param } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+  Request,
+  Body,
+  Get,
+  Param,
+  Req
+} from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { AuthGuard } from "@nestjs/passport";
 import { SongService } from "./song.service";
 import { SongDto } from "./song.dto";
+import { StreamService } from "../stream/stream.service";
 
 @Controller('song')
 @UseGuards(AuthGuard('jwt'))
 export class SongController {
-  constructor(private songService: SongService) {}
+  constructor(
+    private songService: SongService,
+    private streamService: StreamService,) {}
 
   @Get('/')
   async getSongs() {
@@ -21,6 +35,21 @@ export class SongController {
         id: song_id
       }
     })
+  }
+
+  @Get(':id/play')
+  async playSong(@Req() req, @Param('id') song_id: number): Promise<number> {
+    const stream = await this.streamService.create({
+      userId: req.user.user,
+      onPlay: {
+        songId: song_id,
+        playlistPosition: 0
+      },
+      playList: [song_id],
+      album: null
+    });
+    await stream.save();
+    return stream._id
   }
 
   @Post('upload')

@@ -30,9 +30,14 @@ import { AlbumService } from "../album/album.service";
 import { GenreService } from "../genre/genre.service";
 import { AlbumModule } from "../album/album.module";
 import { GenreModule } from "../genre/genre.module";
+import { StreamModule } from "../stream/stream.module";
+import { StreamService } from "../stream/stream.service";
+import { PlaylistService } from "../playlist/playlist.service";
+import { MongooseModule } from "@nestjs/mongoose";
+import { Stream, StreamSchema } from "../stream/models/stream.model";
 
 @Module({
-  providers: [SongService, ArtistService, AlbumService, GenreService],
+  providers: [SongService, ArtistService, AlbumService, GenreService, PlaylistService, StreamService],
   imports: [
     SequelizeModule.forFeature(
       [
@@ -46,7 +51,9 @@ import { GenreModule } from "../genre/genre.module";
     ArtistModule, AlbumModule, GenreModule,
     MulterModule.registerAsync({
       useClass: MulterSongConfig
-    })
+    }),
+    MongooseModule.forFeature([ {name: Stream.name, schema: StreamSchema} ]),
+    StreamModule
   ],
   controllers: [SongController],
   exports: [ ArtistService, AlbumService, GenreService ]
