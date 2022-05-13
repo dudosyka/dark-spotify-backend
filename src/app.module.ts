@@ -1,20 +1,21 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { SongModule } from './song/song.module';
-import { AlbumModule } from './album/album.module';
-import { ArtistModule } from './artist/artist.module';
-import { PlaylistModule } from './playlist/playlist.module';
-import { GenreModule } from './genre/genre.module';
-import { RbacModule } from './rbac/rbac.module';
+import { UserModule } from './modules/user/user.module';
+import { SongModule } from './modules/song/song.module';
+import { AlbumModule } from './modules/album/album.module';
+import { ArtistModule } from './modules/artist/artist.module';
+import { PlaylistModule } from './modules/playlist/playlist.module';
+import { GenreModule } from './modules/genre/genre.module';
+import { RbacModule } from './modules/rbac/rbac.module';
 import { SequelizeModule } from "@nestjs/sequelize";
-import {default as db_conf} from './db_conf'
-import { UserService } from "./user/user.service";
-import { AuthModule } from './auth/auth.module';
-import { MulterAvatarConfig } from './multer-config/multer.avatar.config';
-import { StreamModule } from './stream/stream.module';
+import {default as db_conf} from './conf/db_conf'
+import { UserService } from "./modules/user/services/user.service";
+import { AuthModule } from './modules/auth/auth.module';
+import { MulterAvatarConfig } from './modules/multer-config/multer.avatar.config';
+import { StreamModule } from './modules/stream/stream.module';
 import { MongooseModule } from "@nestjs/mongoose";
+import { PlaylistController } from './modules/playlist/controllers/playlist.controller';
 
 @Module({
   imports: [UserModule, SongModule, AlbumModule, ArtistModule, PlaylistModule, GenreModule, RbacModule,
@@ -33,7 +34,7 @@ import { MongooseModule } from "@nestjs/mongoose";
         dbName: "dark-spotify-db"
       })
   ],
-  controllers: [AppController],
+  controllers: [AppController, PlaylistController],
   providers: [AppService, UserService],
 })
 export class AppModule {}

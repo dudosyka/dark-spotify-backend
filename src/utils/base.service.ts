@@ -1,5 +1,5 @@
-import { SongDto } from "../song/song.dto";
-import { SongModel } from "../song/models/song.model";
+import { SongDto } from "../modules/song/dtos/song.dto";
+import { SongModel } from "../modules/song/models/song.model";
 
 export class BaseService<ModelDto, ModelType> {
   constructor(private attr: string, private db_attr: string, private model: ModelType, private assignModel: any) {}
@@ -22,6 +22,11 @@ export class BaseService<ModelDto, ModelType> {
   public async getOne(query: {}): Promise<ModelType> {
     // @ts-ignore
     return await this.model.findOne(query)
+  }
+
+  public async checkUnique(query: {}): Promise<boolean> {
+    const check = await this.getOne(query);
+    return check === null;
   }
 
   public async delete(query: {}): Promise<number> {
@@ -69,4 +74,5 @@ export class BaseService<ModelDto, ModelType> {
     // @ts-ignore
     return await this.assignModel.bulkCreate(values)
   }
+
 }

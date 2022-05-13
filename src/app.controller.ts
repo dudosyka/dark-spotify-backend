@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { SongModel } from "./song/models/song.model";
+import { SongModel } from "./modules/song/models/song.model";
 
 @Controller()
 export class AppController {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from "./user/user.service";
-import { SongModel } from "./song/models/song.model";
+import { UserService } from "./modules/user/services/user.service";
+import { SongModel } from "./modules/song/models/song.model";
 
 @Injectable()
 export class AppService {
