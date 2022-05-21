@@ -26,6 +26,9 @@ import { MulterModule } from "@nestjs/platform-express";
 import { MulterAvatarConfig } from "../multer-config/multer.avatar.config";
 import { RbacModule } from "../rbac/rbac.module";
 import { StreamModule } from "../stream/stream.module";
+import { MysqlExceptionService } from "../../utils/mysql.exception.service";
+import { FriendsController } from "./controllers/friends.controller";
+import { FriendsService } from "./services/friends.service";
 
 @Module({
   imports: [
@@ -44,7 +47,7 @@ import { StreamModule } from "../stream/stream.module";
     RbacModule,
     StreamModule
   ],
-  providers: [ UserService ],
+  providers: [ UserService, MysqlExceptionService, FriendsService ],
   exports: [
     SequelizeModule.forFeature(
       [
@@ -56,6 +59,6 @@ import { StreamModule } from "../stream/stream.module";
       ]),
     UserService
   ],
-  controllers: [UserController]
+  controllers: [UserController, FriendsController]
 })
 export class UserModule {}

@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS `FriendModels` (
   `child` int(11) NOT NULL,
   `parent` int(11) NOT NULL,
+  `accepted` int(1) NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;

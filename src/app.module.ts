@@ -16,6 +16,7 @@ import { MulterAvatarConfig } from './modules/multer-config/multer.avatar.config
 import { StreamModule } from './modules/stream/stream.module';
 import { MongooseModule } from "@nestjs/mongoose";
 import { PlaylistController } from './modules/playlist/controllers/playlist.controller';
+import { MysqlExceptionService } from "./utils/mysql.exception.service";
 
 @Module({
   imports: [UserModule, SongModule, AlbumModule, ArtistModule, PlaylistModule, GenreModule, RbacModule,
@@ -35,6 +36,6 @@ import { PlaylistController } from './modules/playlist/controllers/playlist.cont
       })
   ],
   controllers: [AppController, PlaylistController],
-  providers: [AppService, UserService],
+  providers: [AppService, UserService, MysqlExceptionService],
 })
 export class AppModule {}

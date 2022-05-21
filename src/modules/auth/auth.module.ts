@@ -3,13 +3,14 @@ import { AuthService } from './services/auth.service';
 import { UserModule } from "../user/user.module";
 import { UserService } from "../user/services/user.service";
 import { PassportModule } from "@nestjs/passport";
-import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtModule } from "@nestjs/jwt";
 import { jwtConstants } from "../../conf/constants";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
 import { AuthController } from './controllers/auth.controller';
 import { RbacModule } from "../rbac/rbac.module";
 import { RbacService } from "../rbac/services/rbac.service";
+import { MysqlExceptionService } from "../../utils/mysql.exception.service";
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { RbacService } from "../rbac/services/rbac.service";
     }),
     RbacModule
   ],
-  providers: [AuthService, UserService, JwtStrategy, LocalStrategy, RbacService],
+  providers: [AuthService, UserService, JwtStrategy, LocalStrategy, RbacService, MysqlExceptionService],
   exports: [AuthModule],
   controllers: [AuthController]
 })

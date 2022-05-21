@@ -1,4 +1,4 @@
-import { forwardRef, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { SongService } from './services/song.service';
 import { SongController } from './controllers/song.controller';
 import { MulterModule } from "@nestjs/platform-express";
@@ -29,6 +29,8 @@ import { AlbumService } from "../album/services/album.service";
 import { GenreService } from "../genre/services/genre.service";
 import { StreamModule } from "../stream/stream.module";
 import { PlaylistService } from "../playlist/services/playlist.service";
+import { UserService } from "../user/services/user.service";
+import { MysqlExceptionService } from "../../utils/mysql.exception.service";
 
 @Module({
   imports: [
@@ -46,7 +48,7 @@ import { PlaylistService } from "../playlist/services/playlist.service";
     }),
     StreamModule
   ],
-  providers: [ SongService, GenreService, ArtistService, AlbumService, PlaylistService ],
+  providers: [ SongService, GenreService, ArtistService, AlbumService, PlaylistService, UserService, MysqlExceptionService ],
   controllers: [SongController],
   exports: [ SongService, GenreService, ArtistService, AlbumService ]
 })

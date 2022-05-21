@@ -1,7 +1,7 @@
 import {
   Body,
   Controller,
-  Get,
+  Get, HttpCode,
   Param,
   Post,
   Req,
@@ -16,13 +16,16 @@ import { SongService } from "../services/song.service";
 import { SongDto } from "../dtos/song.dto";
 import { StreamService } from "../../stream/services/stream.service";
 import { StreamInsertPosition, StreamInsertType } from "../../stream/dtos/update.stream.dto";
+import { UserService } from "../../user/services/user.service";
 
 @Controller('song')
 @UseGuards(AuthGuard('jwt'))
 export class SongController {
   constructor(
     private songService: SongService,
-    private streamService: StreamService) {}
+    private streamService: StreamService,
+    private userService: UserService
+  ) {}
 
   @Get('/')
   async getSongs() {
@@ -30,7 +33,7 @@ export class SongController {
   }
 
   @Get(':id')
-  async getSong(@Param('id') song_id) {
+  async getSong(@Param('id') song_id: number) {
     return this.songService.getOne({
       where: {
         id: song_id
@@ -45,6 +48,22 @@ export class SongController {
       insertPosition: StreamInsertPosition.newQueue,
       value: []
     });
+  }
+
+  @Post(':id/like')
+  async likeSong(@Req() req, @Param('id') song_id: string): Promise<void | boolean> {
+    return this.userService.likeSong({
+      listen_count: 0,
+      downloaded: 0,
+      user_id: req.user.user,
+      song_id: parseInt(song_id)
+    }).then(() => true);
+  }
+
+  @Post(':id/unlike')
+  @HttpCode(200)
+  async unlikeSong(@Req() req, @Param('id') song_id: string): Promise<boolean> {
+    return this.userService.unlikeSong(req.user.user, parseInt(song_id));
   }
 
   @Post('upload')
@@ -70,9 +89,4 @@ export class SongController {
       }
     }, onUpdate)
   }
-
-  // @Post(':id/move')
-  // async move(@Param('id') song_id: number) {
-  //
-  // }
 }

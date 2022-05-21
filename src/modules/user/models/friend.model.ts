@@ -10,4 +10,7 @@ export class FriendModel extends Model {
   @Column
   @ForeignKey(() => UserModel)
   parent: number
+
+  @Column
+  accepted: number
 }

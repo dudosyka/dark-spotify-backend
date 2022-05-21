@@ -8,10 +8,18 @@ import { HttpValidationException } from "../../../exceptions/http.validation.exc
 import { HttpDoubleRecordException } from "../../../exceptions/http.double.record.exception";
 import { BaseService } from "../../../utils/base.service";
 import { UserDto } from "../dtos/user.dto";
+import { UserSongModel } from "../models/user.song.model";
+import { FriendModel } from "../models/friend.model";
+import { MysqlExceptionService } from "../../../utils/mysql.exception.service";
 
 @Injectable()
 export class UserService extends BaseService<UserDto, typeof UserModel> {
-  constructor(@InjectModel (UserModel) private userModel: typeof UserModel) {
+  constructor(
+    @InjectModel (UserModel) private userModel: typeof UserModel,
+    @InjectModel(UserSongModel) private userSongModel: typeof UserSongModel,
+    @InjectModel(FriendModel) private friendModel: typeof FriendModel,
+    private errService: MysqlExceptionService
+  ) {
     super('', '', UserModel, null);
   }
 
@@ -28,7 +36,7 @@ export class UserService extends BaseService<UserDto, typeof UserModel> {
     }))
   }
 
-  private async generatePassword(password): Promise<string> {
+  private async hashPassword(password): Promise<string> {
     return await (new Promise<string>((resolve, reject) => {
       bcrypt.genSalt(10, (err, salt) => {
         if (err) {
@@ -71,7 +79,7 @@ export class UserService extends BaseService<UserDto, typeof UserModel> {
     }
     return await this.userModel.create({
       login: user.login,
-      password: await this.generatePassword(user.password),
+      password: await this.hashPassword(user.password),
       image: "",
       listened_time: 0,
       refresh: ""
@@ -95,5 +103,21 @@ export class UserService extends BaseService<UserDto, typeof UserModel> {
     });
 
     return user.songs;
+  }
+
+  public async likeSong(dto: any): Promise<void | UserSongModel> {
+    return await this.userSongModel.create(dto).catch(err => {
+      this.errService.throw(err)
+    })
+  }
+
+  public async unlikeSong(user_id: number, song_id: number): Promise<boolean> {
+    await this.userSongModel.destroy({
+      where: {
+        song_id,
+        user_id
+      }
+    });
+    return true;
   }
 }
