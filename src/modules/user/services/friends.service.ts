@@ -4,38 +4,75 @@ import { UserFriendDto } from "../dtos/user.friend.dto";
 import { InjectModel } from "@nestjs/sequelize";
 import { UserFriendCreateDto } from "../dtos/user.friend.create.dto";
 import { MysqlExceptionService } from "../../../utils/mysql.exception.service";
+import { Op } from "sequelize";
 
-export class FriendsService extends BaseService<UserFriendDto, typeof FriendModel> {
+export class FriendsService extends BaseService<UserFriendDto> {
   constructor(
     @InjectModel(FriendModel) private friendModel: typeof FriendModel,
     private errService: MysqlExceptionService
   ) {
-    super('', '', FriendModel, null);
+    super("", "", friendModel, null );
   }
 
   public async createRequest(data: UserFriendCreateDto): Promise<void | FriendModel> {
-    return await this.friendModel.create({
+    //Double the request because of specific logic in FriendsModel (we go to create parent-to-child request both for two friends)
+    await this.friendModel.create({
+      parent: data.child, child: data.parent, accepted: 0
+    }).catch(err => this.errService.throw(err))
+    return await FriendModel.create({
       parent: data.parent, child: data.child, accepted: 0
     }).catch(err => this.errService.throw(err))
   }
 
-  public async removeRequest(data: UserFriendDto): Promise<number | void> {
-    return await this.friendModel.destroy({
+  public async removeRequest(user_id: number, friend_id: number): Promise<number | void> {
+    //We are going to remove both of request which was created at createRequest() method
+    return await FriendModel.destroy({
       where: {
-        parent: data.parent,
-        child: data.child
+        [Op.or]: [
+          {
+            [Op.and]: [
+              { child: user_id },
+              { parent: friend_id }
+            ]
+          },
+          {
+            [Op.and]: [
+              { child: friend_id },
+              { parent: user_id }
+            ]
+          }
+        ]
       }
     }).catch(err => this.errService.throw(err))
   }
 
-  public async acceptRequest(data: UserFriendDto): Promise<boolean | void> {
-    console.log(data)
-    return await this.update({
+  public async acceptRequest(user_id: number, friend_id: number): Promise<boolean | void> {
+    //We are going to accept both of request which was created at createRequest() method
+    const query = {
       where: {
-        child: data.child,
-        parent: data.parent
+        [Op.or]: [
+          {
+            [Op.and]: [
+              { child: user_id },
+              { parent: friend_id }
+            ]
+          },
+          {
+            [Op.and]: [
+              { child: friend_id },
+              { parent: user_id }
+            ]
+          }
+        ]
       }
-    }, [data])
-      .catch(err => this.errService.throw(err))
+    }
+    const data = await this.getAll(query);
+    const onUpdate = data.map(el => {
+      return {
+        id: el.id,
+        accepted: 1
+      };
+    })
+    return await this.update(query, onUpdate)
   }
 }

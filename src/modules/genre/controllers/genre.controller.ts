@@ -10,12 +10,12 @@ export class GenreController {
   constructor(private genreService: GenreService) {}
 
   @Get('')
-  async getGenres(): Promise<typeof GenreModel[]> {
+  async getGenres(): Promise<GenreModel[]> {
     return await this.genreService.getAll()
   }
 
   @Get(':id')
-  async getGenre(@Param('id') genre_id: number): Promise<typeof GenreModel> {
+  async getGenre(@Param('id') genre_id: number): Promise<GenreModel> {
     return await this.genreService.getOne({
       where: {
         id: genre_id
@@ -24,7 +24,7 @@ export class GenreController {
   }
 
   @Get(':id/albums')
-  async getGenreAlbums(@Param('id') genre_id: number): Promise<typeof GenreModel> {
+  async getGenreAlbums(@Param('id') genre_id: number): Promise<GenreModel> {
     return await this.genreService.getOne({
       where: {
         id: genre_id
@@ -34,7 +34,7 @@ export class GenreController {
   }
 
   @Get(':id/songs')
-  async getGenreSongs(@Param('id') genre_id: number): Promise<typeof GenreModel> {
+  async getGenreSongs(@Param('id') genre_id: number): Promise<GenreModel> {
     return await this.genreService.getOne({
       where: {
         id: genre_id

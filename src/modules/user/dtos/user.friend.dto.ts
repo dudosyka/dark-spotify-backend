@@ -1,5 +1,6 @@
 export interface UserFriendDto {
-  child: number,
-  parent: number,
+  id: number | null,
+  child?: number,
+  parent?: number,
   accepted: number
 }

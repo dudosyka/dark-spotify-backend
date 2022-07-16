@@ -1,10 +1,27 @@
 import { SongDto } from "../modules/song/dtos/song.dto";
 import { SongModel } from "../modules/song/models/song.model";
+import { BaseModel } from "./base.model";
+import { BaseDto } from "./base.dto";
+import { FindOptions } from "sequelize";
 
-export class BaseService<ModelDto, ModelType> {
-  constructor(private attr: string, private db_attr: string, private model: ModelType, private assignModel: any) {}
+export class BaseService<D extends BaseDto> {
 
-  async createNew(data: ModelDto[]) {
+  constructor(
+    private attr: string,
+    private db_attr: string,
+    private model: typeof BaseModel,
+    private assignModel: typeof BaseModel) {
+  }
+
+  public test() {
+    console.log(this.model.findOne({
+      where: {
+        id: 0
+      }
+    }).then(r => console.log(r)))
+  }
+
+  async createNew(data: D[]) {
     const values = []
     for (let key in data) {
       const item = data[key]
@@ -14,14 +31,12 @@ export class BaseService<ModelDto, ModelType> {
     return await this.model.bulkCreate(values);
   }
 
-  public async getAll(query: {} = {}): Promise<ModelType[]> {
-    // @ts-ignore
-    return await this.model.findAll(query);
+  public async getOne(query: {}): Promise<BaseModel> {
+    return await this.model.findOne(query)
   }
 
-  public async getOne(query: {}): Promise<ModelType> {
-    // @ts-ignore
-    return await this.model.findOne(query)
+  public async getAll(query: {} = {}): Promise<Array<BaseModel>> {
+    return await this.model.findAll(query);
   }
 
   public async checkUnique(query: {}): Promise<boolean> {
@@ -30,29 +45,27 @@ export class BaseService<ModelDto, ModelType> {
   }
 
   public async delete(query: {}): Promise<number> {
-    // @ts-ignore
     return await this.model.destroy(query)
   }
 
-  private convertArrayToIdKeyObject(data: ModelDto[]): {} {
+  private convertArrayToIdKeyObject(data: D[]): {} {
     let res = {};
     for (let key in data) {
       let item = data[key]
-      // @ts-ignore
       res[item.id] = item;
     }
     return res;
   }
 
-  public async update(query, modelDto: ModelDto[]): Promise<boolean> {
+  public async update(query: FindOptions, modelDto: D[]): Promise<boolean> {
     const data = this.convertArrayToIdKeyObject(modelDto)
-    const ids = Object.keys(data);
-    // @ts-ignore
-    const onUpdate = await this.model.findAll(query)
+    const ids = Object.keys(data).map(el => parseInt(el));
+    // Check if it Array of data use it, if not request data from db
+    const onUpdate: BaseModel[] | any = query[0] ? query : await this.model.findAll(query)
     for (let key in onUpdate) {
       let model = onUpdate[key]
       if (ids.indexOf(model.id) != -1) {
-        await model.update(data[model.id])
+        await model.update(data[model.id], { where: { id: model.id } })
       }
     }
     return true
@@ -71,7 +84,6 @@ export class BaseService<ModelDto, ModelType> {
       }
     }
 
-    // @ts-ignore
     return await this.assignModel.bulkCreate(values)
   }
 

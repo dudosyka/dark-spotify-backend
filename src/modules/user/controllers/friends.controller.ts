@@ -1,4 +1,4 @@
-import { Controller, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { FriendsService } from '../services/friends.service'
 import { FriendModel } from "../models/friend.model";
@@ -10,6 +10,11 @@ export class FriendsController {
     private friendsService: FriendsService
   ) {}
 
+  @Get("/")
+  public test() {
+    return this.friendsService.test();
+  }
+
   @Post(':id/add')
   public async createFriendRequest(@Req() req, @Param('id') user_id: number): Promise<void | FriendModel> | never {
     return this.friendsService.createRequest({
@@ -19,20 +24,12 @@ export class FriendsController {
   }
 
   @Post(':id/remove')
-  public async removeRequest(@Req() req, @Param('id') user_id: number): Promise<number | void> | never {
-    return this.friendsService.removeRequest({
-      child: 6,
-      parent: user_id,
-      accepted: 0
-    })
+  public async removeRequest(@Req() req, @Param('id') friend_id: number): Promise<number | void> | never {
+    return this.friendsService.removeRequest(req.user.user, friend_id)
   }
 
   @Post(':id/accept')
-  public async acceptRequest(@Req() req, @Param('id') user_id: number): Promise<boolean | void> | never {
-    return this.friendsService.acceptRequest({
-      child: 6,
-      parent: user_id,
-      accepted: 1
-    })
+  public async acceptRequest(@Req() req, @Param('id') friend_id: number): Promise<boolean | void> | never {
+    return this.friendsService.acceptRequest(req.user.user, friend_id)
   }
 }

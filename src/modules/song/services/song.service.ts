@@ -8,14 +8,14 @@ import { GenreService } from "../../genre/services/genre.service";
 import { BaseService } from "../../../utils/base.service";
 
 @Injectable()
-export class SongService extends BaseService<SongDto, typeof SongModel>{
+export class SongService extends BaseService<SongDto>{
   constructor(
     @InjectModel(SongModel) private songModel: typeof SongModel,
     private artistService: ArtistService,
     private albumService: AlbumService,
     private genreService: GenreService
   ) {
-    super('', '', SongModel, null)
+    super("", "", songModel, null)
   }
 
   public async upload(@UploadedFiles() songs: Array<Express.Multer.File>, songsData: Array<SongDto>): Promise<Array<SongDto>> {
@@ -38,7 +38,7 @@ export class SongService extends BaseService<SongDto, typeof SongModel>{
       }
     }
 
-    const result = await this.songModel.bulkCreate(values)
+    const result = await SongModel.bulkCreate(values)
     await this.artistService.assignToSong(songsData, result);
     await this.albumService.assignToSong(songsData, result);
     await this.genreService.assignToSong(songsData, result);

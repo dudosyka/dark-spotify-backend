@@ -13,14 +13,14 @@ import { FriendModel } from "../models/friend.model";
 import { MysqlExceptionService } from "../../../utils/mysql.exception.service";
 
 @Injectable()
-export class UserService extends BaseService<UserDto, typeof UserModel> {
+export class UserService extends BaseService<UserDto> {
   constructor(
     @InjectModel (UserModel) private userModel: typeof UserModel,
     @InjectModel(UserSongModel) private userSongModel: typeof UserSongModel,
     @InjectModel(FriendModel) private friendModel: typeof FriendModel,
     private errService: MysqlExceptionService
   ) {
-    super('', '', UserModel, null);
+    super("", "", userModel, null);
   }
 
   public async comparePassword(user: UserModel, password: string): Promise<boolean> {
@@ -119,5 +119,17 @@ export class UserService extends BaseService<UserDto, typeof UserModel> {
       }
     });
     return true;
+  }
+
+  public async getFriends(userId: number): Promise<UserModel[] | void> | never {
+    const model = await this.getOne({
+      where: {
+        id: userId
+      },
+      include: [ {model: UserModel, as: 'friends'} ]
+    })
+
+    // @ts-ignore
+    return model.friends;
   }
 }

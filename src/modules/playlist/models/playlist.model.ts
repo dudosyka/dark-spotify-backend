@@ -1,4 +1,4 @@
-import { BelongsToMany, Column, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsToMany, Column, ForeignKey, Table } from "sequelize-typescript";
 import { PlaylistVisibleTypeModel } from "./playlist.visible.type.model";
 import { UserModel } from "../../user/models/user.model";
 import { SongModel } from "../../song/models/song.model";
@@ -6,9 +6,10 @@ import { GenreModel } from "../../genre/models/genre.model";
 import { PlaylistSongModel } from "./playlist.song.model";
 import { PlaylistGenreModel } from "./playlist.genre.model";
 import { PlaylistUserModel } from "./playlist.user.model";
+import { BaseModel } from "../../../utils/base.model";
 
 @Table
-export class PlaylistModel extends Model {
+export class PlaylistModel extends BaseModel {
   @Column
   name: string;
 

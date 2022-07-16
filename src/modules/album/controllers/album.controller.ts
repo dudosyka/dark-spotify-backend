@@ -16,14 +16,14 @@ export class AlbumController {
   }
 
   @Get('/')
-  async getAlbums(): Promise<typeof AlbumModel[]> {
+  async getAlbums(): Promise<AlbumModel[]> {
     return await this.albumService.getAll({
       include: [AlbumTypeModel]
     })
   }
 
   @Get('/:id')
-  async getAlbum(@Param('id') album_id: number): Promise<typeof AlbumModel>  {
+  async getAlbum(@Param('id') album_id: number): Promise<AlbumModel>  {
     return await this.albumService.getOne({
       where: {
         id: album_id
@@ -42,7 +42,7 @@ export class AlbumController {
   }
 
   @Get(':id/songs')
-  async getAlbumSongs(@Param('id') album_id: number): Promise<typeof AlbumModel> {
+  async getAlbumSongs(@Param('id') album_id: number): Promise<AlbumModel> {
     return await this.albumService.getSongs(album_id);
   }
 

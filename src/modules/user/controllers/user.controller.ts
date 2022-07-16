@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Post, Req, Request, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Request,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors
+} from "@nestjs/common";
 import { RbacService } from "../../rbac/services/rbac.service";
 import { AuthGuard } from "@nestjs/passport";
 import { UserService } from "../services/user.service";
@@ -50,6 +61,16 @@ export class UserController {
   @Get('/stream')
   public async getStream(@Req() req) {
     return await this.streamService.findByUser(req.user.user);
+  }
+
+  @Get('/friends')
+  public async getFriends(@Req() req, @Param('userId') userId: number): Promise<UserModel[] | void> | never {
+      return await this.userService.getFriends(req.user.user);
+  }
+
+  @Get(':userId/friends')
+  public async getFriendsByUser(@Req() req, @Param('userId') userId: number): Promise<UserModel[] | void> | never {
+      return await this.userService.getFriends(userId);
   }
 
   @Post('/avatar')

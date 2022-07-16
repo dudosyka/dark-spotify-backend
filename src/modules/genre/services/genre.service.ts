@@ -6,8 +6,11 @@ import { GenreDto } from "../dtos/genre.dto";
 import { GenreModel } from "../models/genre.model";
 
 @Injectable()
-export class GenreService extends BaseService<GenreDto, typeof GenreModel> {
-  constructor(@InjectModel(SongGenreModel) private songGenreModel: typeof SongGenreModel) {
-    super('genres', 'genre_id', GenreModel, songGenreModel)
+export class GenreService extends BaseService<GenreDto> {
+  constructor(
+    @InjectModel(SongGenreModel) private songGenreModel: typeof SongGenreModel,
+    @InjectModel(GenreModel) private genreModel: typeof GenreModel
+  ) {
+      super("genres", "genre_id", genreModel, songGenreModel)
   }
 }

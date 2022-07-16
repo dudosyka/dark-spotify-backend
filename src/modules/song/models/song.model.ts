@@ -1,27 +1,28 @@
-import { BelongsToMany, Column, Model, Table } from "sequelize-typescript";
+import { BelongsToMany, Column, Table } from "sequelize-typescript";
 import { ArtistModel } from "../../artist/models/artist.model";
 import { SongArtistModel } from "./song.artist.model";
 import { GenreModel } from "../../genre/models/genre.model";
 import { SongGenreModel } from "./song.genre.model";
 import { AlbumModel } from "../../album/models/album.model";
 import { SongAlbumModel } from "./song.album.model";
+import { BaseModel } from "../../../utils/base.model";
 
 @Table
-export class SongModel extends Model {
-  declare id: number
+export class SongModel extends BaseModel {
+  declare id?: number
 
   @Column
-  name: string;
+  name?: string;
 
   @Column
-  path: string;
+  path?: string;
 
   @BelongsToMany(() => ArtistModel, () => SongArtistModel)
-  artists: ArtistModel[]
+  artists?: ArtistModel[]
 
   @BelongsToMany(() => GenreModel, () => SongGenreModel)
-  genres: GenreModel[]
+  genres?: GenreModel[]
 
   @BelongsToMany(() => AlbumModel, () => SongAlbumModel)
-  albums: AlbumModel[]
+  albums?: AlbumModel[]
 }

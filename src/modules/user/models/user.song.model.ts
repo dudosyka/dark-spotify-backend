@@ -1,9 +1,10 @@
-import { Column, ForeignKey, Model, Table } from "sequelize-typescript";
+import { Column, ForeignKey, Table } from "sequelize-typescript";
 import { UserModel } from "./user.model";
 import { SongModel } from "../../song/models/song.model";
+import { BaseModel } from "../../../utils/base.model";
 
 @Table
-export class UserSongModel extends Model {
+export class UserSongModel extends BaseModel {
 
   @Column
   listen_count: number

@@ -10,12 +10,12 @@ export class ArtistController {
   constructor(private artistService: ArtistService) {}
 
   @Get('')
-  async getArtists(): Promise<typeof ArtistModel[]> {
+  async getArtists(): Promise<ArtistModel[]> {
     return await this.artistService.getAll();
   }
 
   @Get(':id')
-  async getArtist(@Param('id') artist_id: number): Promise<typeof ArtistModel> {
+  async getArtist(@Param('id') artist_id: number): Promise<ArtistModel> {
     return await this.artistService.getOne({
       where: {
         id: artist_id
@@ -24,7 +24,7 @@ export class ArtistController {
   }
 
   @Get(':id/albums')
-  async getArtistAlbums(@Param('id') artist_id: number): Promise<typeof ArtistModel> {
+  async getArtistAlbums(@Param('id') artist_id: number): Promise<ArtistModel> {
     return await this.artistService.getOne({
       where: {
         id: artist_id
@@ -34,7 +34,7 @@ export class ArtistController {
   }
 
   @Get(':id/songs')
-  async getArtistSongs(@Param('id') artist_id: number): Promise<typeof ArtistModel> {
+  async getArtistSongs(@Param('id') artist_id: number): Promise<ArtistModel> {
     return await this.artistService.getOne({
       where: {
         id: artist_id

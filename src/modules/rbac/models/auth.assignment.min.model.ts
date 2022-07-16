@@ -1,8 +1,9 @@
-import { Column, ForeignKey, Model, Table } from "sequelize-typescript";
+import { Column, ForeignKey, Table } from "sequelize-typescript";
 import { RuleModel } from "./rule.model";
+import { BaseModel } from "../../../utils/base.model";
 
 @Table
-export class AuthAssignmentMinModel extends Model {
+export class AuthAssignmentMinModel extends BaseModel {
   @Column
   @ForeignKey(() => RuleModel)
   child: number
