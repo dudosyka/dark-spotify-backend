@@ -1,3 +1,9 @@
 import { Model } from "sequelize-typescript";
 
-export class BaseModel extends Model {}
+export interface BaseModelInterface {}
+
+
+export class BaseModel extends Model implements BaseModelInterface {}
+
+
+

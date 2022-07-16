@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Controller, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { FriendsService } from '../services/friends.service'
 import { FriendModel } from "../models/friend.model";
@@ -9,11 +9,6 @@ export class FriendsController {
   constructor(
     private friendsService: FriendsService
   ) {}
-
-  @Get("/")
-  public test() {
-    return this.friendsService.test();
-  }
 
   @Post(':id/add')
   public async createFriendRequest(@Req() req, @Param('id') user_id: number): Promise<void | FriendModel> | never {

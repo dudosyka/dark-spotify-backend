@@ -8,8 +8,12 @@ export class MulterSongConfig implements MulterOptionsFactory {
       storage: diskStorage({
         destination: '/home/dudosyka/Documents/dark-spotify-backend/files/songs',
         filename(req, file: Express.Multer.File, callback: (error: (Error | null), filename: string) => void) {
-          const name = `song_${Date.now()}.${ConvertMimetype.convert(file.mimetype)}`
-          callback(null, name)
+          try {
+            const name = `song_${Date.now()}.${ConvertMimetype.convert(file.mimetype)}`
+            callback(null, name)
+          } catch (e) {
+            callback(e, null);
+          }
         }
       })
     }

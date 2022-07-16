@@ -13,21 +13,13 @@ export class BaseService<D extends BaseDto> {
     private assignModel: typeof BaseModel) {
   }
 
-  public test() {
-    console.log(this.model.findOne({
-      where: {
-        id: 0
-      }
-    }).then(r => console.log(r)))
-  }
-
   async createNew(data: D[]) {
     const values = []
     for (let key in data) {
       const item = data[key]
       values.push(item)
     }
-    // @ts-ignore
+
     return await this.model.bulkCreate(values);
   }
 
@@ -73,16 +65,16 @@ export class BaseService<D extends BaseDto> {
 
   public async assignToSong(songs: Array<SongDto>, entities: SongModel[]): Promise<any[]> {
     const values = []
-    for (let i = 0; i < songs.length; i++) {
-      const song = songs[i]
-      const entity = entities[i]
+    entities.forEach((el, key) => {
+      const song = el
+      const entity = entities[key]
       for (let artist in song.artists) {
         values.push({
           song_id: entity.id,
           [this.db_attr]: song[this.attr][artist].id
         })
       }
-    }
+    })
 
     return await this.assignModel.bulkCreate(values)
   }

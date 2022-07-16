@@ -105,7 +105,7 @@ export class StreamService {
       .then(async stream => {
         return await this.append(stream._id, updateDto);
       })
-      .catch(async err => {
+      .catch(async () => {
       return await this.append((await this.create({
         userId: user_id,
         onPlay: {

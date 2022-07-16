@@ -20,11 +20,10 @@ export class SongService extends BaseService<SongDto>{
 
   public async upload(@UploadedFiles() songs: Array<Express.Multer.File>, songsData: Array<SongDto>): Promise<Array<SongDto>> {
     const values = [];
-
-    for (let i = 0; i < songs.length; i++) {
-      const song = songs[i];
-      if (songsData[i]) {
-        const songData = songsData[i];
+    songs.forEach((el, key) => {
+      const song = el;
+      if (songsData[key]) {
+        const songData = songsData[key];
         values.push({
           name: songData.name,
           path: song.path,
@@ -36,9 +35,9 @@ export class SongService extends BaseService<SongDto>{
           path: song.path
         })
       }
-    }
+    })
 
-    const result = await SongModel.bulkCreate(values)
+    const result = await this.songModel.bulkCreate(values);
     await this.artistService.assignToSong(songsData, result);
     await this.albumService.assignToSong(songsData, result);
     await this.genreService.assignToSong(songsData, result);
