@@ -121,15 +121,22 @@ export class UserService extends BaseService<UserDto> {
     return true;
   }
 
-  public async getFriends(userId: number): Promise<UserModel[] | void> | never {
-    const model = await this.getOne({
-      where: {
-        id: userId
-      },
-      include: [ {model: UserModel, as: 'friends'} ]
+  public async getFriends(query: {}): Promise<UserModel[]> | never {
+    return (await UserModel.get(query, true)).friends;
+  }
+
+  public async getFriendsRequests(query: {}): Promise<UserModel[]> | never {
+    const model = await this.userModel.findOne({
+      where: query,
+      include: [{
+        model: UserModel,
+        as: 'friends',
+        where: {
+          "$friends->FriendModel.accepted$": 0,
+        }
+      }]
     })
 
-    // @ts-ignore
-    return model.friends;
+    return model?.friends;
   }
 }

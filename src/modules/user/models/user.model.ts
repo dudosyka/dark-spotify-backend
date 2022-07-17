@@ -29,6 +29,9 @@ export class UserModel extends BaseModel {
   @Column
   refresh: string;
 
+  @Column
+  closed: boolean;
+
   @ForeignKey(() => SongModel)
   status: SongModel;
 
@@ -40,6 +43,46 @@ export class UserModel extends BaseModel {
 
   @BelongsToMany(() => UserModel, { through: () => FriendModel, foreignKey: 'parent', as: 'friends' })
   friends: UserModel[]
+
+  static get(query: {}, friends: boolean = false): Promise<UserModel> {
+    let include = [];
+    if (friends) {
+      include.push({
+        model: UserModel,
+        as: "friends",
+        where: {
+          "$friends->FriendModel.accepted$": 1
+        }
+      });
+    }
+    return new Promise<UserModel>(async (resolve) => {
+      resolve(await UserModel.findOne({
+        where: query,
+        include
+      }));
+    });
+  }
+
+  static getFriends(userId: number): Promise<UserModel[]> {
+    return new Promise<UserModel[]>(async (resolve) => {
+      const model = await UserModel.findOne({
+        where: {
+          id: userId
+        },
+        include: [{
+          model: UserModel,
+          as: "friends",
+          where: {
+            "$friends->FriendModel.accepted$": 1
+          }
+        }]
+      });
+      if (model.friends)
+        resolve(model.friends);
+      else
+        resolve([]);
+    });
+  }
 
   @BelongsToMany(() => RuleModel, () => UserRuleModel)
   rules: RuleModel[]

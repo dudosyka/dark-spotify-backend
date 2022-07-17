@@ -6,9 +6,13 @@ CREATE TABLE IF NOT EXISTS `FriendModels` (
   `updatedAt` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 
+ALTER TABLE `FriendModels` ADD `initiator` `initiator` INT(11) NOT NULL AFTER `accepted`;
+
 ALTER TABLE `FriendModels`
   ADD PRIMARY KEY (`child`,`parent`) USING BTREE,
   ADD KEY `parent` (`parent`);
+
+ALTER TABLE `FriendModels` ADD FOREIGN KEY (`initiator`) REFERENCES `UserModels`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `FriendModels`
   ADD CONSTRAINT `FriendModels_ibfk_1` FOREIGN KEY (`child`) REFERENCES `UserModels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

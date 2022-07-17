@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
 
 export class HttpUserNotFoundException extends HttpException {
-  constructor(id: number) {
+  constructor(id: any) {
     super({
       status: HttpStatus.NOT_FOUND,
-      error: `User with id: ${id} not found`,
+      error: `User ${id} not found`,
     }, HttpStatus.NOT_FOUND);
   }
 

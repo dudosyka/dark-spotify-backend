@@ -19,4 +19,7 @@ export class FriendModel extends BaseModel {
 
   @Column
   accepted: number
+
+  @Column
+  initiator: number
 }

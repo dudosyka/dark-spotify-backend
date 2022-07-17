@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   Param,
@@ -19,6 +18,9 @@ import { UserModel } from "../models/user.model";
 import { HttpUserNotFoundException } from "../exceptions/http.user.not.found.exception";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { StreamService } from "../../stream/services/stream.service";
+import { UserOutput, UserOutputDto } from "../dtos/user.output.dto";
+import { HttpBadRequestException } from "../exceptions/http.bad.request.exception";
+import { CheckFriendInterceptor } from "../../../utils/check.friend.interceptor";
 
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))
@@ -29,33 +31,35 @@ export class UserController {
     private streamService: StreamService
   ) {}
 
-  private static getUserFromBody(@Request() req, userId: any): number {
-    if (typeof userId === 'undefined') {
-      return req.user.user;
-    }
-    return userId;
-  }
-
-  @Get('/')
-  public async index(@Request() req, @Body('userId') userId): Promise<UserModel> {
-    const id = UserController.getUserFromBody(req, userId);
+  @Get('/:login')
+  @UseInterceptors(CheckFriendInterceptor)
+  public async user(@Request() req, @Param('login') login: string): Promise<UserOutput> {
     const user = await this.userService.findOne({
-      id
+      login
     });
     if (!user) {
-      throw new HttpUserNotFoundException(id)
+      throw new HttpUserNotFoundException(login)
     }
-    user.password = ''
-    return user;
+
+    const output = new UserOutputDto([user]);
+    if (user.closed && !req.isFriend)
+      return output.closed()[0];
+    else
+      return output.open()[0];
   }
 
-  @Get('/playlists')
-  public async userPlaylists(@Request() req, @Body('userId') userId): Promise<PlaylistModel[]> {
-    const id = UserController.getUserFromBody(req, userId);
+  @Get('/:login/playlists')
+  @UseInterceptors(CheckFriendInterceptor)
+  public async userPlaylists(@Request() req, @Param('login') login: string): Promise<PlaylistModel[]> {
     const user = await this.userService.findOne({
-      id
-    }, [ { model: PlaylistModel, include: [ SongModel ] } ])
-    return user.playlists;
+        login
+      }, [ { model: PlaylistModel, include: [ SongModel ] } ])
+
+    const output = new UserOutputDto([user]);
+    if (user.closed && !req.isFriend)
+      throw new HttpBadRequestException("Failed. Profile is closed!");
+    else
+      return output.open()[0].playlists;
   }
 
   @Get('/stream')
@@ -63,9 +67,32 @@ export class UserController {
     return await this.streamService.findByUser(req.user.user);
   }
 
-  @Get('/friends')
-  public async getFriends(@Req() req, @Param('userId') userId: number): Promise<UserModel[] | void> | never {
-      return await this.userService.getFriends(req.user.user);
+  @Get('/:login/friends')
+  @UseInterceptors(CheckFriendInterceptor)
+  public async getFriends(@Req() req, @Param('login') login: string): Promise<UserOutput[] | void> | never {
+      if (req.user.login != login && req.isFriend) {
+        const friends = await this.userService.getFriends({ login: login }).catch(err => {
+          throw new HttpBadRequestException(err.message);
+        });
+        const output = new UserOutputDto(friends);
+        return output.closed();
+      }
+      else if (req.user.login == login) {
+        const friends = req.user.friends;
+        const output = new UserOutputDto(friends);
+        return output.closed();
+      }
+      else {
+        return [];
+      }
+  }
+
+  @Get('/friends/requests')
+  public async getFriendsRequests(@Req() req): Promise<UserOutput[]> | never {
+      const requests = await this.userService.getFriendsRequests({ id: req.user.user });
+      const output = new UserOutputDto(requests);
+
+      return output.closed();
   }
 
   @Get(':userId/friends')

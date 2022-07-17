@@ -1,4 +1,5 @@
 export interface UserFriendCreateDto {
   child: number,
-  parent: number
+  parent: number,
+  initiator: number
 }

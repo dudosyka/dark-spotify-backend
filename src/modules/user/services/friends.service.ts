@@ -17,10 +17,10 @@ export class FriendsService extends BaseService<UserFriendDto> {
   public async createRequest(data: UserFriendCreateDto): Promise<void | FriendModel> {
     //Double the request because of specific logic in FriendsModel (we go to create parent-to-child request both for two friends)
     await this.friendModel.create({
-      parent: data.child, child: data.parent, accepted: 0
+      parent: data.child, child: data.parent, accepted: 0, initiator: data.initiator
     }).catch(err => this.errService.throw(err))
-    return await FriendModel.create({
-      parent: data.parent, child: data.child, accepted: 0
+    return await this.friendModel.create({
+      parent: data.parent, child: data.child, accepted: 0, initiator: data.initiator
     }).catch(err => this.errService.throw(err))
   }
 
@@ -54,25 +54,30 @@ export class FriendsService extends BaseService<UserFriendDto> {
           {
             [Op.and]: [
               { child: user_id },
-              { parent: friend_id }
+              { parent: friend_id },
+              { initiator: friend_id }
             ]
           },
           {
             [Op.and]: [
               { child: friend_id },
-              { parent: user_id }
+              { parent: user_id },
+              { initiator: friend_id }
             ]
           }
         ]
       }
     }
-    const data = await this.getAll(query);
+    const data = await this.friendModel.findAll(query);
     const onUpdate = data.map(el => {
       return {
         id: el.id,
         accepted: 1
       };
     })
-    return await this.update(query, onUpdate)
+    if (data.length)
+      return await this.update(query, onUpdate);
+    else
+      throw Error('Request not found!');
   }
 }
