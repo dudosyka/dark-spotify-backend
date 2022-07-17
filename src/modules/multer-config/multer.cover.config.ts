@@ -2,13 +2,13 @@ import { MulterModuleOptions, MulterOptionsFactory } from "@nestjs/platform-expr
 import { diskStorage } from "multer";
 import { filesConstants } from "../../conf/constants";
 
-export class MulterAvatarConfig implements MulterOptionsFactory {
+export class MulterCoverConfig implements MulterOptionsFactory {
   createMulterOptions(): Promise<MulterModuleOptions> | MulterModuleOptions {
     return {
       storage: diskStorage({
-        destination: filesConstants.avatar,
+        destination: filesConstants.playlistCover,
         filename(req, file: Express.Multer.File, callback: (error: (Error | null), filename: string) => void) {
-          const name = `avatar_${req.user['user']}.${file.mimetype.split('/')[1]}`;
+          const name = `cover_${Date.now()}.${file.mimetype.split('/')[1]}`;
           callback(null, name);
         }
       })

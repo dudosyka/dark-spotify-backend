@@ -7,6 +7,7 @@ import { PlaylistSongModel } from "./playlist.song.model";
 import { PlaylistGenreModel } from "./playlist.genre.model";
 import { PlaylistUserModel } from "./playlist.user.model";
 import { BaseModel } from "../../../utils/base.model";
+import { Op } from "sequelize";
 
 @Table
 export class PlaylistModel extends BaseModel {
@@ -18,6 +19,23 @@ export class PlaylistModel extends BaseModel {
 
   @ForeignKey(() => PlaylistVisibleTypeModel)
   playlist_visible_type: PlaylistVisibleTypeModel
+
+  public static async owner(playlistId: number): Promise<number> {
+    const model = await PlaylistUserModel.findOne({
+      where: {
+        playlist_id: playlistId,
+        owner: {
+          [Op.ne]: null
+        }
+      }
+    })
+    return model.user_id;
+  }
+
+  public static async checkOwner(playlistId: number, userId: number) {
+    return userId == (await PlaylistModel.owner(playlistId));
+  }
+
 
   @BelongsToMany(() => SongModel, () => PlaylistSongModel)
   songs: SongModel[]

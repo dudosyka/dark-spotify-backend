@@ -15,8 +15,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { MulterAvatarConfig } from './modules/multer-config/multer.avatar.config';
 import { StreamModule } from './modules/stream/stream.module';
 import { MongooseModule } from "@nestjs/mongoose";
-import { PlaylistController } from './modules/playlist/controllers/playlist.controller';
 import { MysqlExceptionService } from "./utils/mysql.exception.service";
+import { MulterCoverConfig } from "./modules/multer-config/multer.cover.config";
 
 @Module({
   imports: [UserModule, SongModule, AlbumModule, ArtistModule, PlaylistModule, GenreModule, RbacModule,
@@ -28,6 +28,7 @@ import { MysqlExceptionService } from "./utils/mysql.exception.service";
     }),
     AuthModule,
     MulterAvatarConfig,
+    MulterCoverConfig,
     StreamModule,
     MongooseModule.forRoot(
       "mongodb://localhost:27017",
@@ -35,7 +36,7 @@ import { MysqlExceptionService } from "./utils/mysql.exception.service";
         dbName: "dark-spotify-db"
       })
   ],
-  controllers: [AppController, PlaylistController],
+  controllers: [AppController],
   providers: [AppService, UserService, MysqlExceptionService],
 })
 export class AppModule {}

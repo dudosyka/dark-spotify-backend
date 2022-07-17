@@ -21,6 +21,9 @@ import { PlaylistSongModel } from "./models/playlist.song.model";
 import { PlaylistGenreModel } from "./models/playlist.genre.model";
 import { PlaylistVisibleTypeModel } from "./models/playlist.visible.type.model";
 import { GenreModel } from "../genre/models/genre.model";
+import { MulterModule } from "@nestjs/platform-express";
+import { PlaylistController } from "./controllers/playlist.controller";
+import { MulterCoverConfig } from "../multer-config/multer.cover.config";
 
 @Module({
   imports: [
@@ -33,8 +36,12 @@ import { GenreModel } from "../genre/models/genre.model";
       PlaylistModel, PlaylistUserModel, PlaylistSongModel, PlaylistGenreModel, PlaylistVisibleTypeModel,
       GenreModel
     ]),
+    MulterModule.registerAsync({
+      useClass: MulterCoverConfig
+    }),
   ],
   providers: [PlaylistService],
-  exports: [PlaylistService]
+  exports: [PlaylistService],
+  controllers: [PlaylistController]
 })
 export class PlaylistModule {}
