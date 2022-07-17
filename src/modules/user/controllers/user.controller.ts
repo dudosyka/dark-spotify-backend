@@ -14,13 +14,13 @@ import { AuthGuard } from "@nestjs/passport";
 import { UserService } from "../services/user.service";
 import { PlaylistModel } from "../../playlist/models/playlist.model";
 import { SongModel } from "../../song/models/song.model";
-import { UserModel } from "../models/user.model";
 import { HttpUserNotFoundException } from "../exceptions/http.user.not.found.exception";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { StreamService } from "../../stream/services/stream.service";
 import { UserOutput, UserOutputDto } from "../dtos/user.output.dto";
-import { HttpBadRequestException } from "../exceptions/http.bad.request.exception";
+import { HttpBadRequestException } from "../../../exceptions/http.bad.request.exception";
 import { CheckFriendInterceptor } from "../../../utils/check.friend.interceptor";
+import { HttpForbiddenException } from "../../../exceptions/http.forbidden.exception";
 
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))
@@ -57,7 +57,7 @@ export class UserController {
 
     const output = new UserOutputDto([user]);
     if (user.closed && !req.isFriend)
-      throw new HttpBadRequestException("Failed. Profile is closed!");
+      throw new HttpForbiddenException("Profile is closed.");
     else
       return output.open()[0].playlists;
   }
@@ -95,9 +95,38 @@ export class UserController {
       return output.closed();
   }
 
-  @Get(':userId/friends')
-  public async getFriendsByUser(@Req() req, @Param('userId') userId: number): Promise<UserModel[] | void> | never {
-      return await this.userService.getFriends(userId);
+  @Get('/:login/songs')
+  @UseInterceptors(CheckFriendInterceptor)
+  public async getSongs(@Req() req, @Param('login') login: string): Promise<SongModel[]> {
+    if (req.isFriend) {
+      const user = await this.userService.findOne({
+        login
+      }, [
+        { model: SongModel }
+      ]);
+
+      return user?.songs;
+    }
+    else {
+      throw new HttpForbiddenException("Profile is closed.");
+    }
+  }
+
+  @Get('/:login/playlist')
+  @UseInterceptors(CheckFriendInterceptor)
+  public async getPlaylists(@Req() req, @Param('login') login: string): Promise<PlaylistModel[]> {
+    if (req.isFriend) {
+      const user = await this.userService.findOne({
+        login
+      }, [
+        { model: PlaylistModel }
+      ]);
+
+      return user?.playlists;
+    }
+    else {
+      throw new HttpForbiddenException("Profile is closed.");
+    }
   }
 
   @Post('/avatar')

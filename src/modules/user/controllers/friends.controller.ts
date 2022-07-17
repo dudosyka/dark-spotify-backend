@@ -2,7 +2,7 @@ import { Controller, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { FriendsService } from '../services/friends.service'
 import { FriendModel } from "../models/friend.model";
-import { HttpBadRequestException } from "../exceptions/http.bad.request.exception";
+import { HttpBadRequestException } from "../../../exceptions/http.bad.request.exception";
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('friends')

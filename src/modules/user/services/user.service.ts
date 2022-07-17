@@ -99,7 +99,7 @@ export class UserService extends BaseService<UserDto> {
       where: {
         id: 3
       },
-      include: [SongModel, { model: UserModel, as: 'children' }, { model: UserModel, as: "parent" }]
+      include: [SongModel]
     });
 
     return user.songs;
