@@ -44,7 +44,7 @@ export class UserModel extends BaseModel {
   @BelongsToMany(() => UserModel, { through: () => FriendModel, foreignKey: 'parent', as: 'friends' })
   friends: UserModel[]
 
-  static get(query: {}, friends: boolean = false): Promise<UserModel> {
+  static get(query: {}, friends: boolean = false, playlists: boolean = false, songs: boolean = false): Promise<UserModel> {
     let include = [];
     if (friends) {
       include.push({
@@ -55,33 +55,67 @@ export class UserModel extends BaseModel {
         }
       });
     }
-    return new Promise<UserModel>(async (resolve) => {
-      resolve(await UserModel.findOne({
+    if (playlists) {
+      include.push({
+        model: PlaylistModel,
+      })
+    }
+    if (songs) {
+      include.push({
+        model: SongModel,
+      })
+    }
+    return new Promise<UserModel>((resolve, reject) => {
+      UserModel.findAll({
         where: query,
         include
-      }));
+      }).then(res => {
+        resolve(res[0]);
+      }).catch(err => {
+        reject(err)
+      })
     });
   }
 
-  static getFriends(userId: number): Promise<UserModel[]> {
-    return new Promise<UserModel[]>(async (resolve) => {
-      const model = await UserModel.findOne({
-        where: {
-          id: userId
-        },
-        include: [{
-          model: UserModel,
-          as: "friends",
-          where: {
-            "$friends->FriendModel.accepted$": 1
-          }
-        }]
-      });
-      if (model.friends)
-        resolve(model.friends);
-      else
-        resolve([]);
+  async getSongs(limit: number = null): Promise<SongModel[]> {
+    return UserSongModel.findAll({
+      where: {
+        user_id: this.getDataValue('id')
+      },
+      limit,
+      include: [
+        SongModel
+      ]
+    }).then(res => {
+      return res.map(el => el.song);
+    })
+  }
+
+  async getPlaylists(limit: number = null): Promise<PlaylistModel[]> {
+    return PlaylistUserModel.findAll({
+      where: {
+        user_id: this.getDataValue('id')
+      },
+      limit,
+      include: [
+        PlaylistModel
+      ]
+    }).then(res => {
+      return res.map(el => el.playlist)
     });
+  }
+
+  async getFriends(limit: number = null): Promise<UserModel[]> {
+    return FriendModel.findAll({
+      where: {
+          parent: this.getDataValue('id'),
+          accepted: 1
+      },
+      limit,
+      include: [
+        UserModel
+      ]
+    }).then(res => res.map(el => el.friend))
   }
 
   @BelongsToMany(() => RuleModel, () => UserRuleModel)

@@ -58,7 +58,7 @@ export class UserService extends BaseService<UserDto> {
       include
     })
   }
-  
+
   public async updateRefresh(user: UserModel, iat: number): Promise<UserModel> {
     return await user.update({
       refresh: iat
@@ -119,6 +119,12 @@ export class UserService extends BaseService<UserDto> {
       }
     });
     return true;
+  }
+
+  public async get(query: {}, friends: boolean = false, playlists: boolean = false, songs: boolean = false): Promise<UserModel> {
+    return await this.userModel.get(query, friends, playlists, songs).catch(err => {
+      throw err;
+    });
   }
 
   public async getFriends(query: {}): Promise<UserModel[]> | never {

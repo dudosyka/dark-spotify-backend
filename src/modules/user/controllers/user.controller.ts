@@ -34,18 +34,25 @@ export class UserController {
   @Get('/:login')
   @UseInterceptors(CheckFriendInterceptor)
   public async user(@Request() req, @Param('login') login: string): Promise<UserOutput> {
-    const user = await this.userService.findOne({
-      login
+    const userModel = await this.userService.get({ login: login }).catch(err => {
+      throw new HttpBadRequestException(err.message);
     });
-    if (!user) {
+
+    if (!userModel) {
       throw new HttpUserNotFoundException(login)
     }
 
-    const output = new UserOutputDto([user]);
-    if (user.closed && !req.isFriend)
+    if (userModel.closed && !req.isFriend) {
+      const output = new UserOutputDto([userModel]);
       return output.closed()[0];
-    else
+    }
+    else {
+      userModel.friends = await userModel.getFriends(5);
+      userModel.songs = await userModel.getSongs(5);
+      userModel.playlists = await userModel.getPlaylists(5);
+      const output = new UserOutputDto([userModel]);
       return output.open()[0];
+    }
   }
 
   @Get('/:login/playlists')
@@ -71,7 +78,8 @@ export class UserController {
   @UseInterceptors(CheckFriendInterceptor)
   public async getFriends(@Req() req, @Param('login') login: string): Promise<UserOutput[] | void> | never {
       if (req.user.login != login && req.isFriend) {
-        const friends = await this.userService.getFriends({ login: login }).catch(err => {
+        const user = await this.userService.get({ login: login });
+        const friends = await this.userService.getFriends({ id: user.id }).catch(err => {
           throw new HttpBadRequestException(err.message);
         });
         const output = new UserOutputDto(friends);

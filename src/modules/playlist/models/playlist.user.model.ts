@@ -1,4 +1,4 @@
-import { Column, ForeignKey, Table } from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, Table } from "sequelize-typescript";
 import { PlaylistModel } from "./playlist.model";
 import { UserModel } from "../../user/models/user.model";
 import { BaseModel } from "../../../utils/base.model";
@@ -13,4 +13,7 @@ export class PlaylistUserModel extends BaseModel {
 
   @Column
   owner: boolean
+
+  @BelongsTo(() => PlaylistModel, 'playlist_id')
+  playlist: PlaylistModel
 }
