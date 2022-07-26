@@ -38,8 +38,8 @@ export class UserOutputDto {
     }));
   }
 
-  public open(): UserOutput[] {
-    return this.userModel.map(el => ({
+  public async open(): Promise<UserOutput[]> {
+    return await Promise.all(this.userModel.map(async el => ({
       id: el.id,
       login: el.login,
       password: null,
@@ -47,11 +47,11 @@ export class UserOutputDto {
       listened_time: el.listened_time,
       refresh: null,
       closed: false,
-      status: el.status,
+      status: await el.status(),
       songs: el.songs,
       playlists: el.playlists,
       friends: el.friends,
       rules: el.rules
-    }));
+    })));
   }
 }

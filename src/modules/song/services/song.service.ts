@@ -6,6 +6,8 @@ import { ArtistService } from "../../artist/services/artist.service";
 import { AlbumService } from "../../album/services/album.service";
 import { GenreService } from "../../genre/services/genre.service";
 import { BaseService } from "../../../utils/base.service";
+const getMP3Duration = require('get-mp3-duration');
+import * as fs from "fs";
 
 @Injectable()
 export class SongService extends BaseService<SongDto>{
@@ -22,17 +24,21 @@ export class SongService extends BaseService<SongDto>{
     const values = [];
     songs.forEach((el, key) => {
       const song = el;
+      const buffer = fs.readFileSync(song.path);
+      const duration = getMP3Duration(buffer);
       if (songsData[key]) {
         const songData = songsData[key];
         values.push({
           name: songData.name,
           path: song.path,
+          duration: (duration * 1000)
         });
       }
       else {
         values.push({
           name: "Unnamed song",
-          path: song.path
+          path: song.path,
+          duration: (duration / 1000)
         })
       }
     })

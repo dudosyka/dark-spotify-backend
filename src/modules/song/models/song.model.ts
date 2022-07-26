@@ -20,6 +20,9 @@ export class SongModel extends BaseModel {
   @Column
   path?: string;
 
+  @Column
+  duration?: number
+
   @BelongsToMany(() => ArtistModel, () => SongArtistModel)
   artists?: ArtistModel[]
 

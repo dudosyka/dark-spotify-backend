@@ -112,8 +112,7 @@ export class UserService extends BaseService<UserDto> {
   }
 
   public async unlikeSong(user_id: number, song_id: number): Promise<boolean> {
-    await this.userSongModel.destroy({
-      where: {
+    await this.userSongModel.update( { like: null }, { where: {
         song_id,
         user_id
       }

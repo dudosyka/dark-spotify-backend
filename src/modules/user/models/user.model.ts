@@ -10,6 +10,14 @@ import { BaseModel } from "../../../utils/base.model";
 
 @Table
 export class UserModel extends BaseModel {
+  async status(): Promise<SongModel> {
+    return SongModel.findOne({
+      where: {
+        id: this.status_song
+      }
+    });
+  }
+
   @ForeignKey(() => UserSongModel)
   @ForeignKey(() => FriendModel)
   declare id: number
@@ -32,8 +40,8 @@ export class UserModel extends BaseModel {
   @Column
   closed: boolean;
 
-  @ForeignKey(() => SongModel)
-  status: SongModel;
+  @Column
+  status_song: number
 
   @BelongsToMany(() => SongModel, () => UserSongModel)
   songs: SongModel[]
@@ -80,7 +88,8 @@ export class UserModel extends BaseModel {
   async getSongs(limit: number = null): Promise<SongModel[]> {
     return UserSongModel.findAll({
       where: {
-        user_id: this.getDataValue('id')
+        user_id: this.getDataValue('id'),
+        like: 1
       },
       limit,
       include: [

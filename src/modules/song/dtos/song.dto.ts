@@ -6,6 +6,7 @@ export interface SongDto {
   id: number,
   name: string,
   path: string,
+  duration?: number,
   artists: ArtistDto[] | null,
   genres: GenreDto[] | null,
   albums: AlbumDto[] | null,

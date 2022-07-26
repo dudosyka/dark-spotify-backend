@@ -9,8 +9,10 @@ import { AlbumService } from "../../album/services/album.service";
 import { createReadStream, ReadStream } from "fs";
 import { StreamInsertPosition, StreamInsertType, UpdateStreamDto } from "../dtos/update.stream.dto";
 import { PlaylistService } from "../../playlist/services/playlist.service";
-import { Op } from "sequelize";
+import sequelize, { Op } from "sequelize";
 import { SongModel } from "../../song/models/song.model";
+import { UserModel } from "../../user/models/user.model";
+import { UserSongModel } from "../../user/models/user.song.model";
 
 class StreamPlaylistManager {
   constructor(private streamModel: StreamDocument, private playlistService: PlaylistService, private albumService: AlbumService) {}
@@ -106,15 +108,15 @@ export class StreamService {
         return await this.append(stream._id, updateDto);
       })
       .catch(async () => {
-      return await this.append((await this.create({
-        userId: user_id,
-        onPlay: {
-          playlistPosition: 0,
-          songId: 0,
-        },
-        playList: [],
-        album: null
-      }))._id, updateDto);
+        return await this.append((await this.create({
+          userId: user_id,
+          onPlay: {
+            playlistPosition: 0,
+            songId: 0,
+          },
+          playList: [],
+          album: null
+        }))._id, updateDto);
     });
   }
 
@@ -183,9 +185,19 @@ export class StreamService {
   }
 
   async getOnPlay(id: string): Promise<ReadStream> | never {
-    const onPlay = (await this.findOne(id)).onPlay;
-    const song = await this.songService.getOne({ where: { id: onPlay.songId } });
-    return createReadStream(song['path'])
+    console.log('---------------GET_ON_PLAY---------------');
+    const stream = (await this.findOne(id));
+    const userModel = await UserModel.findOne({ where: { id: stream.userId } });
+    const onPlay = stream.onPlay;
+    const songModel = await SongModel.findOne({ where: { id: onPlay.songId } });
+    const res = await UserSongModel.update({ listen_count: sequelize.literal('listen_count + ' + 1) }, { where: { user_id: userModel.id, song_id: songModel.id }});
+    if (res[0] === 0) {
+      await UserSongModel.create({ listen_count: 1, user_id: userModel.id, song_id: songModel.id, downloaded: false, liked: 0 })
+    }
+    userModel.status_song = songModel.id;
+    userModel.listened_time += songModel.duration;
+    await userModel.save();
+    return createReadStream(songModel['path'])
   }
 
   async next(id: string): Promise<ReadStream> {

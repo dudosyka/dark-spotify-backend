@@ -46,7 +46,7 @@ export class SongController {
     return this.streamService.play(req.user.user, {
       insertType: StreamInsertType.Song,
       insertPosition: StreamInsertPosition.newQueue,
-      value: []
+      value: [ song_id ]
     });
   }
 
@@ -56,7 +56,8 @@ export class SongController {
       listen_count: 0,
       downloaded: 0,
       user_id: req.user.user,
-      song_id: parseInt(song_id)
+      song_id: parseInt(song_id),
+      like: 1,
     }).then(() => true);
   }
 
