@@ -12,7 +12,7 @@ export class UserSongModel extends BaseModel {
   downloaded: boolean
 
   @Column
-  like: number
+  liked: number
 
   @Column
   @ForeignKey(() => UserModel)
