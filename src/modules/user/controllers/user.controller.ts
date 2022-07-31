@@ -51,7 +51,7 @@ export class UserController {
       userModel.songs = await userModel.getSongs(5);
       userModel.playlists = await userModel.getPlaylists(5);
       const output = new UserOutputDto([userModel]);
-      return output.open()[0];
+      return (await output.open())[0];
     }
   }
 
@@ -66,7 +66,7 @@ export class UserController {
     if (user.closed && !req.isFriend)
       throw new HttpForbiddenException("Profile is closed.");
     else
-      return output.open()[0].playlists;
+      return (await output.open())[0].playlists;
   }
 
   @Get('/stream')
