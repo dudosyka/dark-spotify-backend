@@ -89,7 +89,7 @@ export class UserModel extends BaseModel {
     return UserSongModel.findAll({
       where: {
         user_id: this.getDataValue('id'),
-        like: 1
+        liked: 1
       },
       limit,
       include: [
