@@ -45,4 +45,11 @@ export class PlaylistModel extends BaseModel {
 
   @BelongsToMany(() => UserModel, () => PlaylistUserModel)
   users: UserModel[]
+
+  public checkSongExists(song_id: number): boolean {
+    const songs = this.songs.map(el => {
+      return el.id;
+    })
+    return songs.includes(song_id);
+  }
 }

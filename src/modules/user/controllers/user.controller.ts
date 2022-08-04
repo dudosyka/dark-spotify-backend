@@ -17,7 +17,7 @@ import { SongModel } from "../../song/models/song.model";
 import { HttpUserNotFoundException } from "../exceptions/http.user.not.found.exception";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { StreamService } from "../../stream/services/stream.service";
-import { UserOutput, UserOutputDto } from "../dtos/user.output.dto";
+import { FriendRequestOutput, UserOutput, UserOutputDto } from '../dtos/user.output.dto';
 import { HttpBadRequestException } from "../../../exceptions/http.bad.request.exception";
 import { CheckFriendInterceptor } from "../../../utils/check.friend.interceptor";
 import { HttpForbiddenException } from "../../../exceptions/http.forbidden.exception";
@@ -30,6 +30,37 @@ export class UserController {
     private userService: UserService,
     private streamService: StreamService
   ) {}
+
+  @Get('/stream')
+  public async getStream(@Req() req) {
+    return await this.streamService.findByUser(req.user.user).then(r => {
+      return {
+        id: r._id,
+        ...r['_doc']
+      }
+    });
+  }
+
+  @Post('/avatar')
+  @UseInterceptors(FileInterceptor('avatar'))
+  public async uploadAvatar(@Request() req, @UploadedFile() avatar: Express.Multer.File): Promise<{ path: string }> {
+    return {
+      path: await this.userService.uploadAvatar(req.user.user, avatar)
+    }
+  }
+
+  @Get('/friends/requests')
+  public async getFriendsRequests(@Req() req): Promise<FriendRequestOutput[]> | never {
+    const requests = await this.userService.getFriendsRequests({ id: req.user.user });
+
+    return requests.map(el => {
+      const userOutput = new UserOutputDto([el.user]);
+      return {
+        user: userOutput.closed()[0],
+        initiator: el.initiator
+      }
+    });
+  }
 
   @Get('/:login')
   @UseInterceptors(CheckFriendInterceptor)
@@ -69,11 +100,6 @@ export class UserController {
       return (await output.open())[0].playlists;
   }
 
-  @Get('/stream')
-  public async getStream(@Req() req) {
-    return await this.streamService.findByUser(req.user.user);
-  }
-
   @Get('/:login/friends')
   @UseInterceptors(CheckFriendInterceptor)
   public async getFriends(@Req() req, @Param('login') login: string): Promise<UserOutput[] | void> | never {
@@ -95,53 +121,17 @@ export class UserController {
       }
   }
 
-  @Get('/friends/requests')
-  public async getFriendsRequests(@Req() req): Promise<UserOutput[]> | never {
-      const requests = await this.userService.getFriendsRequests({ id: req.user.user });
-      const output = new UserOutputDto(requests);
-
-      return output.closed();
-  }
-
   @Get('/:login/songs')
   @UseInterceptors(CheckFriendInterceptor)
   public async getSongs(@Req() req, @Param('login') login: string): Promise<SongModel[]> {
     if (req.isFriend) {
-      const user = await this.userService.findOne({
-        login
-      }, [
-        { model: SongModel }
-      ]);
-
-      return user?.songs;
+      const userModel = await this.userService.get({ login: login }).catch(err => {
+        throw new HttpBadRequestException(err.message);
+      });
+      return await userModel.getSongs();
     }
     else {
       throw new HttpForbiddenException("Profile is closed.");
-    }
-  }
-
-  @Get('/:login/playlist')
-  @UseInterceptors(CheckFriendInterceptor)
-  public async getPlaylists(@Req() req, @Param('login') login: string): Promise<PlaylistModel[]> {
-    if (req.isFriend) {
-      const user = await this.userService.findOne({
-        login
-      }, [
-        { model: PlaylistModel }
-      ]);
-
-      return user?.playlists;
-    }
-    else {
-      throw new HttpForbiddenException("Profile is closed.");
-    }
-  }
-
-  @Post('/avatar')
-  @UseInterceptors(FileInterceptor('avatar'))
-  public async uploadAvatar(@Request() req, @UploadedFile() avatar: Express.Multer.File): Promise<{ path: string }> {
-    return {
-      path: await this.userService.uploadAvatar(req.user.user, avatar)
     }
   }
 }

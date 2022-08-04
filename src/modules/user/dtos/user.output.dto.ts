@@ -18,6 +18,11 @@ export interface UserOutput {
   rules?: RuleModel[]
 }
 
+export interface FriendRequestOutput {
+  user: UserOutput,
+  initiator: number
+}
+
 export class UserOutputDto {
   constructor(private userModel: UserModel[]) {}
 

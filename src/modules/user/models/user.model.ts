@@ -7,6 +7,7 @@ import { FriendModel } from "./friend.model";
 import { RuleModel } from "../../rbac/models/rule.model";
 import { UserRuleModel } from "../../rbac/models/user.rule.model";
 import { BaseModel } from "../../../utils/base.model";
+import { ArtistModel } from '../../artist/models/artist.model';
 
 @Table
 export class UserModel extends BaseModel {
@@ -93,7 +94,7 @@ export class UserModel extends BaseModel {
       },
       limit,
       include: [
-        SongModel
+        { model: SongModel, include: [ ArtistModel ] },
       ]
     }).then(res => {
       return res.map(el => el.song);
@@ -107,7 +108,7 @@ export class UserModel extends BaseModel {
       },
       limit,
       include: [
-        PlaylistModel
+        { model: PlaylistModel },
       ]
     }).then(res => {
       return res.map(el => el.playlist)

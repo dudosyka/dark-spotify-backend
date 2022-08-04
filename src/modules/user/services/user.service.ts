@@ -130,7 +130,7 @@ export class UserService extends BaseService<UserDto> {
     return (await UserModel.get(query, true)).friends;
   }
 
-  public async getFriendsRequests(query: {}): Promise<UserModel[]> | never {
+  public async getFriendsRequests(query: {}): Promise<{ user: UserModel, initiator: number }[]> | never {
     const model = await this.userModel.findOne({
       where: query,
       include: [{
@@ -142,6 +142,16 @@ export class UserService extends BaseService<UserDto> {
       }]
     })
 
-    return model?.friends;
+    const requests = model?.friends;
+
+    return requests.map(request => {
+      const friendModel = request['FriendModel'];
+      console.log(request);
+      console.log(friendModel);
+      return {
+        user: request,
+        initiator: friendModel.initiator
+      }
+    });
   }
 }

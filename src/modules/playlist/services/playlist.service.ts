@@ -86,16 +86,18 @@ export class PlaylistService extends BaseService<CreatePlaylistDtoInterface>{
   }
 
   public async appendSongs(playlistId: number, songs: number[], userId: number): Promise<boolean> | never {
-    const playlist = await this.playlistModel.findOne({ where: { id: playlistId } });
+    const playlist = await this.playlistModel.findOne({ where: { id: playlistId }, include: [ SongModel ] });
     if (!playlist)
       throw Error(`Playlist ${playlistId} not found`);
     if (!(await PlaylistModel.checkOwner(playlistId, userId)))
       throw new HttpForbiddenException('Forbidden');
 
+    const onAppend = songs.filter(el => !playlist.checkSongExists(el));
+
     const append = await SongModel.findAll({
       where: {
         id: {
-          [Op.in]: songs
+          [Op.in]: onAppend
         }
       }
     });

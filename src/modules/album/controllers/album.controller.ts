@@ -6,6 +6,7 @@ import { AlbumModel } from "../models/album.model";
 import { AlbumDto } from "../dtos/album.dto";
 import { StreamService } from "../../stream/services/stream.service";
 import { StreamInsertPosition, StreamInsertType } from "../../stream/dtos/update.stream.dto";
+import { SongModel } from '../../song/models/song.model';
 
 @Controller('album')
 @UseGuards(AuthGuard('jwt'))
@@ -28,7 +29,7 @@ export class AlbumController {
       where: {
         id: album_id
       },
-      include: [AlbumTypeModel]
+      include: [AlbumTypeModel, SongModel]
     })
   }
 

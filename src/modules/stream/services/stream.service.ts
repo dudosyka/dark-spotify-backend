@@ -105,6 +105,7 @@ export class StreamService {
   async play(user_id: number, updateDto: UpdateStreamDto) {
     return await this.findByUser(user_id)
       .then(async stream => {
+        console.log(stream);
         return await this.append(stream._id, updateDto);
       })
       .catch(async () => {
@@ -128,6 +129,7 @@ export class StreamService {
   }
 
   async findByUser(user_id: number): Promise<StreamDocument> | never {
+    console.log(user_id);
     const res = await this.streamModel.findOne({ user_id: user_id }).exec();
     if (res === null)
       throw new NotFoundException()
@@ -185,7 +187,6 @@ export class StreamService {
   }
 
   async getOnPlay(id: string): Promise<ReadStream> | never {
-    console.log('---------------GET_ON_PLAY---------------');
     const stream = (await this.findOne(id));
     const userModel = await UserModel.findOne({ where: { id: stream.userId } });
     const onPlay = stream.onPlay;

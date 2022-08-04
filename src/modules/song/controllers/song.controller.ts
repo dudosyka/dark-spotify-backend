@@ -57,8 +57,10 @@ export class SongController {
       downloaded: 0,
       user_id: req.user.user,
       song_id: parseInt(song_id),
-      like: 1,
-    }).then(() => true);
+      liked: 1,
+    }).then(() => true).catch(err => {
+      throw err;
+    });
   }
 
   @Post(':id/unlike')
