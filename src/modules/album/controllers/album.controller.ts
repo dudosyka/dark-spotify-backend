@@ -35,6 +35,7 @@ export class AlbumController {
 
   @Post('/:id/play')
   async playAlbum(@Req() req, @Param('id') album_id: number): Promise<string> {
+    await this.albumService.setPlayed(req.user.user, album_id);
     return await this.streamService.play(req.user.user, {
       insertPosition: StreamInsertPosition.newQueue,
       insertType: StreamInsertType.Album,

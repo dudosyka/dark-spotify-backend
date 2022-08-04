@@ -5,7 +5,7 @@ import { InjectModel } from "@nestjs/sequelize";
 import { CreatePlaylistDto, CreatePlaylistDtoInterface, InputPlaylistDto } from "../dtos/create.playlist.dto";
 import { PlaylistSongModel } from "../models/playlist.song.model";
 import { SongModel } from "../../song/models/song.model";
-import { Op } from "sequelize";
+import sequelize, { Op } from "sequelize";
 import { PlaylistUserModel } from "../models/playlist.user.model";
 import { HttpNotFoundException } from "../../../exceptions/http.not.found.exception";
 import { InputPlaylistOnUpdate, UpdatePlaylistDto } from "../dtos/update.playlist.dto";
@@ -68,17 +68,21 @@ export class PlaylistService extends BaseService<CreatePlaylistDtoInterface>{
 
     const dto = new UpdatePlaylistDto(playlistDto, cover);
     const onUpdate = await dto.output();
-    await playlist.update(onUpdate);
 
     if (onUpdate.songs) {
       await this.playlistSongModel.destroy({ where: { playlist_id: playlist.id} });
       let values = []
+
+      let newDuration = 0
       onUpdate.songs.map(el => {
         values.push({
           song_id: el.id,
           playlist_id: playlist.id
         })
+        newDuration += el.duration;
       });
+
+      await playlist.update({ ...onUpdate, duration: newDuration });
       await this.playlistSongModel.bulkCreate(values);
     }
 
@@ -102,14 +106,21 @@ export class PlaylistService extends BaseService<CreatePlaylistDtoInterface>{
       }
     });
 
+
     if (playlist) {
       let values = [];
+      let appendDuration = 0;
+
       append.map(el => {
+        appendDuration += el.duration;
         values.push({
           song_id: el.id,
           playlist_id: playlist.id
         })
       })
+      playlist.duration += appendDuration;
+
+      await playlist.save();
       await this.playlistSongModel.bulkCreate(values);
       return true;
     } else {
@@ -124,6 +135,19 @@ export class PlaylistService extends BaseService<CreatePlaylistDtoInterface>{
     if (!(await PlaylistModel.checkOwner(playlistId, userId)))
       throw new HttpForbiddenException('Forbidden');
 
+    const deletedSongs = await SongModel.findAll({
+      where: {
+        id: {
+          [Op.in]: songs
+        }
+      }
+    });
+
+    let deletedDuration = 0;
+    deletedSongs.map(el => {
+      deletedDuration += el.duration;
+    });
+
     const deleted = await this.playlistSongModel.destroy({
       where: {
         playlist_id: playlistId,
@@ -132,6 +156,8 @@ export class PlaylistService extends BaseService<CreatePlaylistDtoInterface>{
         }
       }
     })
+    playlist.duration -= deletedDuration;
+    await playlist.save();
 
     return deleted != 0;
   }
@@ -146,5 +172,24 @@ export class PlaylistService extends BaseService<CreatePlaylistDtoInterface>{
     const deleted = await this.playlistModel.destroy({ where: { id: playlistId } });
 
     return deleted != 0;
+  }
+
+  async setPlayed(userId: number, playlistId: number): Promise<void> {
+    const model = await this.playlistUserModel.findOne({
+      where: {
+        user_id: userId,
+        playlist_id: playlistId
+      }
+    });
+
+    if (!model) {
+      await this.playlistUserModel.create({
+        user_id: userId,
+        playlist_id: playlistId,
+        listen_count: 1,
+      });
+    } else {
+      await PlaylistUserModel.update({ listen_count: sequelize.literal('listen_count + ' + 1) }, { where: { user_id: userId, playlist_id: playlistId }});
+    }
   }
 }

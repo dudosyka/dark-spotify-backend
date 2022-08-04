@@ -8,6 +8,8 @@ import { RuleModel } from "../../rbac/models/rule.model";
 import { UserRuleModel } from "../../rbac/models/user.rule.model";
 import { BaseModel } from "../../../utils/base.model";
 import { ArtistModel } from '../../artist/models/artist.model';
+import { AlbumModel } from '../../album/models/album.model';
+import { AlbumUserModel } from '../../album/models/album.user.model';
 
 @Table
 export class UserModel extends BaseModel {
@@ -49,6 +51,9 @@ export class UserModel extends BaseModel {
 
   @BelongsToMany(() => PlaylistModel, () => PlaylistUserModel)
   playlists: PlaylistModel[]
+
+  @BelongsToMany(() => AlbumModel, () => AlbumUserModel)
+  albums: AlbumModel[]
 
   @BelongsToMany(() => UserModel, { through: () => FriendModel, foreignKey: 'parent', as: 'friends' })
   friends: UserModel[]

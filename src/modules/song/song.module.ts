@@ -31,6 +31,7 @@ import { StreamModule } from "../stream/stream.module";
 import { PlaylistService } from "../playlist/services/playlist.service";
 import { UserService } from "../user/services/user.service";
 import { MysqlExceptionService } from "../../utils/mysql.exception.service";
+import { AlbumUserModel } from '../album/models/album.user.model';
 
 @Module({
   imports: [
@@ -39,7 +40,7 @@ import { MysqlExceptionService } from "../../utils/mysql.exception.service";
         UserModel, UserSongModel, FriendModel, SubscribeModel,
         SongModel, SongArtistModel, SongAlbumModel, SongGenreModel,
         ArtistModel, ArtistGenreModel, ArtistAlbumModel,
-        AlbumModel, AlbumTypeModel, AlbumGenreModel,
+        AlbumModel, AlbumTypeModel, AlbumGenreModel, AlbumUserModel,
         PlaylistModel, PlaylistUserModel, PlaylistSongModel, PlaylistGenreModel, PlaylistVisibleTypeModel,
         GenreModel
     ]),

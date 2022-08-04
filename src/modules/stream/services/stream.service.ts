@@ -64,7 +64,7 @@ class StreamPlaylistManager {
           include: [ SongModel ]
         }))['songs'];
     }
-    console.log(songs);
+
     if (updateDto.insertPosition == StreamInsertPosition.afterPlay) {
       for (let key in songs) {
         data.playList.splice(this.streamModel.onPlay.playlistPosition + parseInt(key) + 1, 0, songs[key].id);
@@ -105,7 +105,6 @@ export class StreamService {
   async play(user_id: number, updateDto: UpdateStreamDto) {
     return await this.findByUser(user_id)
       .then(async stream => {
-        console.log(stream);
         return await this.append(stream._id, updateDto);
       })
       .catch(async () => {
@@ -129,7 +128,6 @@ export class StreamService {
   }
 
   async findByUser(user_id: number): Promise<StreamDocument> | never {
-    console.log(user_id);
     const res = await this.streamModel.findOne({ user_id: user_id }).exec();
     if (res === null)
       throw new NotFoundException()

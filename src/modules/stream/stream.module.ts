@@ -1,9 +1,8 @@
-import { forwardRef, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { StreamController } from './controllers/stream.controller';
 import { StreamService } from './services/stream.service';
 import { MongooseModule } from "@nestjs/mongoose";
 import { Stream, StreamSchema } from "./models/stream.model";
-import { AlbumModule } from "../album/album.module";
 import { SongService } from "../song/services/song.service";
 import { AlbumService } from "../album/services/album.service";
 import { SequelizeModule } from "@nestjs/sequelize";
@@ -30,6 +29,7 @@ import { GenreModel } from "../genre/models/genre.model";
 import { PlaylistService } from "../playlist/services/playlist.service";
 import { ArtistService } from "../artist/services/artist.service";
 import { GenreService } from "../genre/services/genre.service";
+import { AlbumUserModel } from '../album/models/album.user.model';
 
 @Module({
   controllers: [StreamController],
@@ -39,7 +39,7 @@ import { GenreService } from "../genre/services/genre.service";
       UserModel, UserSongModel, FriendModel, SubscribeModel,
       SongModel, SongArtistModel, SongAlbumModel, SongGenreModel,
       ArtistModel, ArtistGenreModel, ArtistAlbumModel,
-      AlbumModel, AlbumTypeModel, AlbumGenreModel,
+      AlbumModel, AlbumTypeModel, AlbumGenreModel, AlbumUserModel,
       PlaylistModel, PlaylistUserModel, PlaylistSongModel, PlaylistGenreModel, PlaylistVisibleTypeModel,
       GenreModel
     ]),

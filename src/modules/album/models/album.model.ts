@@ -9,6 +9,9 @@ export class AlbumModel extends BaseModel {
   @Column
   name?: string
 
+  @Column
+  duration?: number
+
   @HasOne(() => AlbumTypeModel, 'album_type_id')
   @ForeignKey(() => AlbumTypeModel)
   type?: AlbumTypeModel

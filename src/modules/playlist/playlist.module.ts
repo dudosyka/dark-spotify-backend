@@ -24,6 +24,7 @@ import { GenreModel } from "../genre/models/genre.model";
 import { MulterModule } from "@nestjs/platform-express";
 import { PlaylistController } from "./controllers/playlist.controller";
 import { MulterCoverConfig } from "../multer-config/multer.cover.config";
+import { StreamModule } from '../stream/stream.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { MulterCoverConfig } from "../multer-config/multer.cover.config";
     MulterModule.registerAsync({
       useClass: MulterCoverConfig
     }),
+    StreamModule
   ],
   providers: [PlaylistService],
   exports: [PlaylistService],

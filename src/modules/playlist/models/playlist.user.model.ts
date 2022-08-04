@@ -14,6 +14,12 @@ export class PlaylistUserModel extends BaseModel {
   @Column
   owner: boolean
 
+  @Column
+  listen_count: number
+
+  @Column
+  liked: number
+
   @BelongsTo(() => PlaylistModel, 'playlist_id')
   playlist: PlaylistModel
 }

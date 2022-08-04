@@ -20,22 +20,8 @@ export class PlaylistModel extends BaseModel {
   @ForeignKey(() => PlaylistVisibleTypeModel)
   playlist_visible_type: PlaylistVisibleTypeModel
 
-  public static async owner(playlistId: number): Promise<number> {
-    const model = await PlaylistUserModel.findOne({
-      where: {
-        playlist_id: playlistId,
-        owner: {
-          [Op.ne]: null
-        }
-      }
-    })
-    return model.user_id;
-  }
-
-  public static async checkOwner(playlistId: number, userId: number) {
-    return userId == (await PlaylistModel.owner(playlistId));
-  }
-
+  @Column
+  duration: number
 
   @BelongsToMany(() => SongModel, () => PlaylistSongModel)
   songs: SongModel[]
@@ -45,6 +31,25 @@ export class PlaylistModel extends BaseModel {
 
   @BelongsToMany(() => UserModel, () => PlaylistUserModel)
   users: UserModel[]
+
+  public static async owner(playlistId: number): Promise<number> {
+    const model = await PlaylistUserModel.findOne({
+      where: {
+        playlist_id: playlistId,
+        owner: {
+          [Op.ne]: null
+        }
+      }
+    })
+    if (model)
+      return model.user_id;
+    else
+      return 0
+  }
+
+  public static async checkOwner(playlistId: number, userId: number) {
+    return userId == (await PlaylistModel.owner(playlistId));
+  }
 
   public checkSongExists(song_id: number): boolean {
     const songs = this.songs.map(el => {
