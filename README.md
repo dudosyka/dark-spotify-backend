@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <a href="http://dark.com/" target="blank"><img src="https://i.ibb.co/H4b44BL/dark-logo2.png" width="320" alt="Dark Logo" /></a>
 </p>
 
 # Dark-time music stream service 
@@ -37,3 +37,7 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+<p align="center">
+  <a href="http://dark.com/" target="blank"><img src="https://i.ibb.co/ZY53N0s/dark-simvol2.png" width="160" alt="Dark Logo" /></a>
+</p>
